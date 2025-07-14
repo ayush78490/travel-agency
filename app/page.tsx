@@ -21,12 +21,29 @@ import {
   X,
 } from "lucide-react"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
+import { fetchTourPackages } from "@/utils/api"
+
+type TourPackage = {
+  id: number;
+  image1: string;
+  image2?: string;
+  image3?: string;
+  image4?: string;
+  image5?: string;
+  duration: string;
+  title: string;
+  price: string;
+  destination?: string;
+};
 
 export default function GoSamyatiTravel() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const [openPolicy, setOpenPolicy] = useState<string | null>(null)
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [packages, setPackages] = useState<TourPackage[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const heroSlides = [
     {
@@ -66,10 +83,10 @@ export default function GoSamyatiTravel() {
     },
   ]
 
-  const packages = [
+  const fallbackPackages = [
     {
       id: 1,
-      image: "/images/london.jpeg?height=200&width=300",
+      image1: "/images/london.jpeg",
       duration: "5 Nights & 6 Days",
       title: "LONDON PACKAGE",
       price: "INR 40,000",
@@ -77,7 +94,7 @@ export default function GoSamyatiTravel() {
     },
     {
       id: 2,
-      image: "/images/peris.jpeg?height=200&width=300",
+      image1: "/images/peris.jpeg",
       duration: "7 Nights & 8 Days",
       title: "PARIS PACKAGE",
       price: "INR 55,000",
@@ -85,7 +102,7 @@ export default function GoSamyatiTravel() {
     },
     {
       id: 3,
-      image: "/images/dubai.jpeg?height=200&width=300",
+      image1: "/images/dubai.jpeg",
       duration: "4 Nights & 5 Days",
       title: "DUBAI PACKAGE",
       price: "INR 35,000",
@@ -93,7 +110,7 @@ export default function GoSamyatiTravel() {
     },
     {
       id: 4,
-      image: "/images/singapore.jpeg?height=200&width=300",
+      image1: "/images/singapore.jpeg",
       duration: "6 Nights & 7 Days",
       title: "SINGAPORE PACKAGE",
       price: "INR 45,000",
@@ -101,7 +118,49 @@ export default function GoSamyatiTravel() {
     },
   ]
 
-  // Auto-advance hero carousel
+  type TourPackage = {
+  id: number;
+  image1: string;
+  image2?: string;
+  image3?: string;
+  image4?: string;
+  image5?: string;
+  duration: string;
+  title: string;
+  price: string;
+  destination?: string;
+};
+
+  useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const data = await fetchTourPackages({
+          limit: 8,
+          category: 'International'
+        });
+        
+        // Ensure data is always an array
+        const packageData = Array.isArray(data) ? data : [];
+        setPackages(packageData);
+        
+        if (packageData.length === 0) {
+          setError('No tour packages found');
+        }
+      } catch (err) {
+        console.error('Failed to fetch packages:', err);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setPackages([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPackages();
+  }, []);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)
@@ -117,16 +176,87 @@ export default function GoSamyatiTravel() {
     setCurrentHeroSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)
   }
 
+  const renderPackageCards = (packageList: TourPackage[]) => {
+    if (isLoading) {
+      return (
+        <div className="col-span-full text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600 mx-auto mb-4"></div>
+          <p>Loading packages...</p>
+        </div>
+      )
+    }
+
+    if (error || !packageList?.length) {
+      return fallbackPackages.map((pkg) => (
+        <Card key={`fallback-${pkg.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+          <div className="relative h-48">
+            <Image 
+              src={pkg.image1 || "/images/default-tour.jpg"} 
+              alt={pkg.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            />
+          </div>
+          <CardContent className="p-4">
+            {pkg.duration && (
+              <Badge variant="outline" className="mb-2 text-xs">
+                {pkg.duration}
+              </Badge>
+            )}
+            <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">
+              {pkg.title}
+            </h3>
+            <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
+            <TourRedirectButton
+              tourId={pkg.id}
+              tourTitle={pkg.title}
+              price={pkg.price}
+              className="w-full bg-red-600 hover:bg-red-700"
+              showIcon={true}
+            />
+          </CardContent>
+        </Card>
+      ));
+    }
+
+    return packageList.map((pkg: TourPackage) => (
+      <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+        <div className="relative h-48">
+          <Image 
+            src={pkg.image1 || "/images/default-tour.jpg"} 
+            alt={pkg.title}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          />
+        </div>
+        <CardContent className="p-4">
+          <Badge variant="outline" className="mb-2 text-xs">
+            {pkg.duration}
+          </Badge>
+          <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">{pkg.title}</h3>
+          <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
+          <TourRedirectButton
+            tourId={pkg.id}
+            tourTitle={pkg.title}
+            price={pkg.price}
+            className="w-full bg-red-600 hover:bg-red-700"
+            showIcon={true}
+          />
+        </CardContent>
+      </Card>
+    ))
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <header className="bg-white shadow-sm relative z-50">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <div className="text-2xl font-bold text-red-600">GoSamyati</div>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             <Link href="/" className="text-gray-700 hover:text-red-600 font-medium transition-colors">
               Home
@@ -142,7 +272,6 @@ export default function GoSamyatiTravel() {
             </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
           <Button
             variant="ghost"
             size="sm"
@@ -153,7 +282,6 @@ export default function GoSamyatiTravel() {
           </Button>
         </div>
 
-        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-white border-t shadow-lg">
             <nav className="container mx-auto px-4 py-4 space-y-4">
@@ -174,7 +302,6 @@ export default function GoSamyatiTravel() {
         )}
       </header>
 
-      {/* Hero Section with Redesigned Carousel */}
       <section className="relative h-screen overflow-hidden">
         <div className="absolute inset-0">
           <Image
@@ -188,12 +315,9 @@ export default function GoSamyatiTravel() {
         </div>
 
         <div className="relative z-10 flex items-center justify-center h-full px-4">
-          {/* Redesigned Carousel Container - Right Side Focus */}
           <div className="relative w-full max-w-7xl mx-auto">
-            {/* Cards Container - Positioned to the right */}
             <div className="flex items-center justify-end pr-8 sm:pr-16 lg:pr-24">
               <div className="relative flex items-center justify-center space-x-4 sm:space-x-6">
-                {/* Main Card - Screenshot Style with Enhanced Styling */}
                 <Card className="relative overflow-hidden rounded-2xl shadow-2xl w-80 h-96 sm:w-96 sm:h-[28rem] lg:w-[420px] lg:h-[32rem] z-30 transform transition-all duration-500 hover:scale-105 cursor-pointer border-4 border-white/20 backdrop-blur-sm">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                   <Image
@@ -204,7 +328,6 @@ export default function GoSamyatiTravel() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
 
-                  {/* Screenshot-like UI Elements */}
                   <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-20">
                     <div className="flex space-x-2">
                       <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -226,7 +349,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Secondary Card - Partially Visible */}
                 <Card className="relative overflow-hidden rounded-2xl shadow-xl w-64 h-80 sm:w-72 sm:h-88 lg:w-80 lg:h-96 transform scale-90 opacity-80 transition-all duration-500 hover:scale-95 hover:opacity-90 cursor-pointer z-20 border-2 border-white/10">
                   <Image
                     src={heroSlides[currentHeroSlide].categories[1].image || "/images/mauritius-beach.jpeg"}
@@ -246,7 +368,6 @@ export default function GoSamyatiTravel() {
               </div>
             </div>
 
-            {/* Navigation Arrows - Positioned below cards */}
             <div className="flex items-center justify-center mt-8 space-x-4">
               <Button
                 onClick={prevHeroSlide}
@@ -267,7 +388,6 @@ export default function GoSamyatiTravel() {
           </div>
         </div>
 
-        {/* Hero Carousel Indicators */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
           {heroSlides.map((_, index) => (
             <button
@@ -282,14 +402,11 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* Pack & Go Getaways */}
       <section className="py-12 sm:py-16 bg-white">
         <div className="container mx-auto px-4 sm:px-6">
           <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-gray-900">PACK & GO GETAWAYS</h2>
 
-          {/* Responsive Destination Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 h-auto lg:h-96">
-            {/* Left Column - Kenya and Australia */}
             <div className="lg:col-span-3 flex flex-col gap-4">
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
@@ -318,7 +435,6 @@ export default function GoSamyatiTravel() {
               </Card>
             </div>
 
-            {/* Center Column - Mauritius and Switzerland */}
             <div className="lg:col-span-6 flex flex-col gap-4">
               <Card className="relative overflow-hidden rounded-lg h-20 sm:h-24 group cursor-pointer">
                 <Image
@@ -347,7 +463,6 @@ export default function GoSamyatiTravel() {
               </Card>
             </div>
 
-            {/* Right Column - London and Hong Kong */}
             <div className="lg:col-span-3 flex flex-col gap-4">
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
@@ -379,7 +494,6 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* GoSamyati Special */}
       <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -389,32 +503,11 @@ export default function GoSamyatiTravel() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {packages.map((pkg) => (
-              <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <Badge variant="outline" className="mb-2 text-xs">
-                    {pkg.duration}
-                  </Badge>
-                  <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">{pkg.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
-                  <TourRedirectButton
-                    tourId={pkg.id}
-                    tourTitle={pkg.title}
-                    price={pkg.price}
-                    className="w-full bg-red-600 hover:bg-red-700"
-                    showIcon={true}
-                  />
-                </CardContent>
-              </Card>
-            ))}
+            {renderPackageCards(packages.slice(0, 4))}
           </div>
         </div>
       </section>
 
-      {/* Visit the Heart of India */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -424,32 +517,11 @@ export default function GoSamyatiTravel() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {packages.map((pkg) => (
-              <Card key={`india-${pkg.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <Badge variant="outline" className="mb-2 text-xs">
-                    {pkg.duration}
-                  </Badge>
-                  <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">{pkg.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
-                  <TourRedirectButton
-                    tourId={`india-${pkg.id}`}
-                    tourTitle={pkg.title}
-                    price={pkg.price}
-                    className="w-full bg-red-600 hover:bg-red-700"
-                    showIcon={true}
-                  />
-                </CardContent>
-              </Card>
-            ))}
+            {renderPackageCards(packages.slice(4, 8))}
           </div>
         </div>
       </section>
 
-      {/* Explore the World */}
       <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
@@ -459,32 +531,11 @@ export default function GoSamyatiTravel() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {packages.map((pkg) => (
-              <Card key={`world-${pkg.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative h-48">
-                  <Image src={pkg.image || "/placeholder.svg"} alt={pkg.title} fill className="object-cover" />
-                </div>
-                <CardContent className="p-4">
-                  <Badge variant="outline" className="mb-2 text-xs">
-                    {pkg.duration}
-                  </Badge>
-                  <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">{pkg.title}</h3>
-                  <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
-                  <TourRedirectButton
-                    tourId={`world-${pkg.id}`}
-                    tourTitle={pkg.title}
-                    price={pkg.price}
-                    className="w-full bg-red-600 hover:bg-red-700"
-                    showIcon={true}
-                  />
-                </CardContent>
-              </Card>
-            ))}
+            {renderPackageCards(packages.slice(0, 4))}
           </div>
         </div>
       </section>
 
-      {/* Special Booking Section */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -502,10 +553,8 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* Enhanced Collage Section */}
       <section className="py-16 relative">
         <div className="container mx-auto px-4">
-          {/* Main Background Image */}
           <div className="relative h-96 sm:h-[500px] lg:h-[600px] rounded-lg overflow-hidden">
             <Image
               src="/images/collage-background.png"
@@ -514,10 +563,8 @@ export default function GoSamyatiTravel() {
               className="object-cover"
             />
 
-            {/* Overlaid Destination Cards */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative w-full h-full max-w-6xl mx-auto">
-                {/* Top Right - Mountain Destination */}
                 <Card className="absolute top-8 right-8 sm:top-12 sm:right-16 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                   <Image src="/images/mount-everest.webp" alt="Mountain Adventure" fill className="object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -526,7 +573,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Center Left - Heritage */}
                 <Card className="absolute top-1/2 left-8 sm:left-16 transform -translate-y-1/2 w-36 h-28 sm:w-44 sm:h-36 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                   <Image src="/images/heritage-hotel.webp" alt="Heritage Sites" fill className="object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -535,7 +581,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Center - Beach Destination */}
                 <Card className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-32 sm:w-48 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
                   <Image src="/images/mauritius-beach.jpeg" alt="Beach Paradise" fill className="object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -544,7 +589,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Bottom Left - Culture */}
                 <Card className="absolute bottom-8 left-8 sm:bottom-12 sm:left-16 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                   <Image src="/images/portlouis.jpeg" alt="Cultural Sites" fill className="object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -553,7 +597,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Bottom Right - Adventure */}
                 <Card className="absolute bottom-8 right-8 sm:bottom-12 sm:right-16 w-36 h-28 sm:w-44 sm:h-36 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                   <Image
                     src="/placeholder.svg?height=150&width=200"
@@ -567,7 +610,6 @@ export default function GoSamyatiTravel() {
                   </div>
                 </Card>
 
-                {/* Top Center - City Tours */}
                 <Card className="absolute top-8 left-1/2 transform -translate-x-1/2 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
                   <Image src="/placeholder.svg?height=120&width=160" alt="City Tours" fill className="object-cover" />
                   <div className="absolute inset-0 bg-black bg-opacity-20"></div>
@@ -581,7 +623,6 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className="py-16 relative">
         <div className="absolute inset-0">
           <Image src="/images/testimonials-bg.png" alt="Testimonials Background" fill className="object-cover" />
@@ -612,7 +653,6 @@ export default function GoSamyatiTravel() {
             <h4 className="font-semibold text-gray-900">{testimonials[currentTestimonial].name}</h4>
             <p className="text-gray-600">{testimonials[currentTestimonial].location}</p>
 
-            {/* Testimonial Navigation Dots */}
             <div className="flex justify-center mt-8 space-x-2">
               {testimonials.map((_, index) => (
                 <button
@@ -626,7 +666,6 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* Why Us */}
       <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center mb-8 sm:mb-12">
@@ -654,7 +693,6 @@ export default function GoSamyatiTravel() {
         </div>
       </section>
 
-      {/* Policies Section */}
       <section className="py-12 sm:py-16 bg-gray-50">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
           <div className="space-y-4">

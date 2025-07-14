@@ -6,22 +6,11 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { ChevronDown, ChevronUp, Phone, Mail, MapPin, Bed, Car, Utensils, Star, Check } from "lucide-react"
+import { ChevronDown, ChevronUp, Phone, Mail, MapPin, Bed, Car, Utensils, Star } from "lucide-react"
 
 export default function SereneAndamanRelaxPage() {
   const [openDay, setOpenDay] = useState<string | null>("DAY 5")
   const [openPolicy, setOpenPolicy] = useState<string | null>(null)
-  const [showEnquiry, setShowEnquiry] = useState(false)
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: ""
-  })
 
   const tourDetails = {
     id: "serene-andaman-relax",
@@ -102,189 +91,8 @@ export default function SereneAndamanRelaxPage() {
     }
   ]
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-  }
-
-  const handleSubmitEnquiry = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  setSubmitError(null);
-
-  try {
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.message) {
-      throw new Error('All fields are required');
-    }
-
-    if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
-      throw new Error('Please enter a valid email address');
-    }
-
-    const response = await fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        message: formData.message
-      }),
-    });
-
-    // Handle HTML responses (like when the API returns an error page)
-    const contentType = response.headers.get('content-type');
-    let result;
-    
-    if (contentType?.includes('application/json')) {
-      result = await response.json();
-    } else {
-      const text = await response.text();
-      throw new Error(text || 'Unexpected response from server');
-    }
-
-    if (!response.ok) {
-      throw new Error(result.message || 'Failed to submit enquiry');
-    }
-
-    setSubmitSuccess(true);
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      message: ""
-    });
-    
-    // Close the modal after 2 seconds
-    setTimeout(() => {
-      setShowEnquiry(false);
-      setSubmitSuccess(false);
-    }, 2000);
-
-  } catch (error) {
-    console.error("Error submitting enquiry:", error);
-    setSubmitError(
-      error instanceof Error ? 
-      error.message.replace(/<\/?[^>]+(>|$)/g, "") : // Remove HTML tags if present
-      'An unexpected error occurred'
-    );
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-return (
-  <div className="min-h-screen bg-white relative">
-    {/* Enquiry Form Modal */}
-    {showEnquiry && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white p-6 rounded-lg max-w-md w-full">
-          <h2 className="text-xl font-bold mb-4">Enquiry Form</h2>
-          {submitSuccess ? (
-            <div className="text-center py-8">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                <Check className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Enquiry Submitted</h3>
-              <p className="text-sm text-gray-600">
-                Thank you! We'll contact you shortly.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmitEnquiry} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Full Name*</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isSubmitting}
-                  className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Email*</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isSubmitting}
-                  className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone Number*</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isSubmitting}
-                  className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Message*</label>
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  required
-                  disabled={isSubmitting}
-                  rows={4}
-                  className="w-full px-3 py-2 border rounded-md disabled:opacity-50"
-                ></textarea>
-              </div>
-
-              {submitError && (
-                <div className="text-red-500 text-sm">
-                  {submitError}
-                </div>
-              )}
-
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  className="bg-red-600 hover:bg-red-700 flex-1"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Submitting...
-                    </span>
-                  ) : 'Submit'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1"
-                  onClick={() => setShowEnquiry(false)}
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          )}
-        </div>
-      </div>
-    )}
-
+  return (
+    <div className="min-h-screen bg-white relative">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
@@ -360,13 +168,14 @@ return (
                     <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 text-sm font-semibold">
                       BOOK NOW
                     </Button>
-                    <Button
-                      variant="outline"
-                      className="border-red-600 text-red-600 hover:bg-red-50 px-6 py-2 text-sm font-semibold bg-transparent"
-                      onClick={() => setShowEnquiry(true)}
-                    >
-                      SEND AN ENQUIRY
-                    </Button>
+                    <Link href="/contact">
+                      <Button
+                        variant="outline"
+                        className="border-red-600 text-red-600 hover:bg-red-50 px-6 py-2 text-sm font-semibold bg-transparent"
+                      >
+                        SEND AN ENQUIRY
+                      </Button>
+                    </Link>
                   </div>
 
                   <div className="flex items-center text-red-600 text-sm">
@@ -599,13 +408,14 @@ return (
                     BOOK NOW
                   </Button>
 
-                  <Button
-                    variant="outline"
-                    className="w-full border-red-600 text-red-600 hover:bg-red-50 bg-transparent text-sm"
-                    onClick={() => setShowEnquiry(true)}
-                  >
-                    Send Enquiry
-                  </Button>
+                  <Link href="/contact">
+                    <Button
+                      variant="outline"
+                      className="w-full border-red-600 text-red-600 hover:bg-red-50 bg-transparent text-sm"
+                    >
+                      Send Enquiry
+                    </Button>
+                  </Link>
                 </div>
               </div>
 
