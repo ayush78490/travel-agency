@@ -556,74 +556,71 @@ export default function GoSamyatiTravel() {
       </section>
 
       <section className="py-16 relative">
-        <div className="container mx-auto px-4">
-          <div className="relative h-96 sm:h-[500px] lg:h-[600px] rounded-lg overflow-hidden">
-            <Image
-              src="/images/collage-background.png"
-              alt="Travel Destinations Collage"
-              fill
-              className="object-cover"
-            />
+      <div className="container mx-auto px-4">
+        <div className="relative h-96 sm:h-[500px] lg:h-[600px] rounded-lg overflow-hidden">
+          <Image
+            src="/images/Kenya.jpeg"
+            alt="Travel Destinations Collage"
+            fill
+            className="object-cover"
+          />
 
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative w-full h-full max-w-6xl mx-auto">
-                <Card className="absolute top-8 right-8 sm:top-12 sm:right-16 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <Image src="/images/mount-everest.webp" alt="Mountain Adventure" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-xs sm:text-sm font-semibold">Mountains</h4>
-                  </div>
-                </Card>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="relative w-full h-full max-w-6xl mx-auto">
+              {/* Bottom-left card (base of triangle) */}
+              <Card className="absolute bottom-8 right-0 sm:bottom-12 sm:right-0 w-40 h-32 sm:w-48 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
+                <Image src="/images/portlouis.jpeg" alt="Cultural Sites" fill className="object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h4 className="text-sm sm:text-base font-semibold">Culture</h4>
+                </div>
+              </Card>
 
-                <Card className="absolute top-1/2 left-8 sm:left-16 transform -translate-y-1/2 w-36 h-28 sm:w-44 sm:h-36 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <Image src="/images/heritage-hotel.webp" alt="Heritage Sites" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-xs sm:text-sm font-semibold">Heritage</h4>
-                  </div>
-                </Card>
+              {/* Bottom-right card (right angle of triangle) */}
+              <Card className="absolute bottom-8 right-1/3 sm:bottom-12 sm:right-56 w-40 h-32 sm:w-48 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
+                <Image
+                  src="/placeholder.svg?height=150&width=200"
+                  alt="Adventure Tours"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h4 className="text-sm sm:text-base font-semibold">Adventure</h4>
+                </div>
+              </Card>
 
-                <Card className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-32 sm:w-48 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
-                  <Image src="/images/mauritius-beach.jpeg" alt="Beach Paradise" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-sm sm:text-base font-semibold">Beaches</h4>
-                  </div>
-                </Card>
+              {/* Top-left card (left angle of triangle) */}
+              <Card className="absolute bottom-8 right-1/2 sm:right-40 sm:bottom-12 w-40 h-32 sm:w-56 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
+                <Image src="/images/mount-everest.webp" alt="Mountain Adventure" fill className="object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h4 className="text-sm sm:text-base font-semibold">Mountains</h4>
+                </div>
+              </Card>
 
-                <Card className="absolute bottom-8 left-8 sm:bottom-12 sm:left-16 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <Image src="/images/portlouis.jpeg" alt="Cultural Sites" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-xs sm:text-sm font-semibold">Culture</h4>
-                  </div>
-                </Card>
+              {/* Center-left card (midpoint of hypotenuse) */}
+              <Card className="absolute top-1/3 right-1/4 right-80 sm:right-56 w-36 h-28 sm:w-44 sm:h-36 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                <Image src="/images/heritage-hotel.webp" alt="Heritage Sites" fill className="object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h4 className="text-xs sm:text-sm font-semibold">Heritage</h4>
+                </div>
+              </Card>
 
-                <Card className="absolute bottom-8 right-8 sm:bottom-12 sm:right-16 w-36 h-28 sm:w-44 sm:h-36 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <Image
-                    src="/placeholder.svg?height=150&width=200"
-                    alt="Adventure Tours"
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-xs sm:text-sm font-semibold">Adventure</h4>
-                  </div>
-                </Card>
-
-                <Card className="absolute top-8 left-1/2 transform -translate-x-1/2 w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
-                  <Image src="/placeholder.svg?height=120&width=160" alt="City Tours" fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                  <div className="absolute bottom-2 left-2 text-white">
-                    <h4 className="text-xs sm:text-sm font-semibold">Cities</h4>
-                  </div>
-                </Card>
-              </div>
+              {/* Center card (midpoint of hypotenuse) */}
+              <Card className="absolute top-1/3 right-1/4 right-0  w-32 h-24 sm:w-40 sm:h-32 overflow-hidden rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer">
+                <Image src="/placeholder.svg?height=120&width=160" alt="City Tours" fill className="object-cover" />
+                <div className="absolute inset-0 bg-black bg-opacity-20"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h4 className="text-xs sm:text-sm font-semibold">Cities</h4>
+                </div>
+              </Card>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
       <section className="py-16 relative">
         <div className="absolute inset-0">

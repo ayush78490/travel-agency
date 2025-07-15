@@ -10,17 +10,23 @@ import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube, Send
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
-    subject: "",
-    message: "",
+    preferredDestination: "",
+    departureDate: "",
+    returnDate: "",
+    numberOfTravelers: "",
+    hotelCategory: "",
+    travelInterests: "",
+    additionalMessage: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
@@ -36,8 +42,8 @@ export default function ContactPage() {
 
     try {
       // Basic validation
-      if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-        throw new Error('All required fields must be filled')
+      if (!formData.firstName || !formData.email) {
+        throw new Error('First Name and Email are required fields')
       }
 
       if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
@@ -49,13 +55,7 @@ export default function ContactPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          contact: formData.phone,
-          subject: formData.subject,
-          message: formData.message
-        }),
+        body: JSON.stringify(formData),
       })
 
       // Handle response
@@ -76,11 +76,17 @@ export default function ContactPage() {
       // Success case
       setSubmitSuccess(true)
       setFormData({
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
-        subject: "",
-        message: ""
+        preferredDestination: "",
+        departureDate: "",
+        returnDate: "",
+        numberOfTravelers: "",
+        hotelCategory: "",
+        travelInterests: "",
+        additionalMessage: "",
       })
 
     } catch (error) {
@@ -97,7 +103,7 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      {/* Header - unchanged */}
       <header className="bg-white shadow-sm">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center">
@@ -121,17 +127,16 @@ export default function ContactPage() {
       </header>
 
       <div className="container mx-auto px-6 py-8">
-        {/* Page Header */}
+        {/* Page Header - modified for trip planning */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Plan Your Dream Trip</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Have questions about our tours or need help planning your next adventure? We're here to help you create
-            unforgettable memories.
+            Tell us about your travel preferences and we'll help you create the perfect itinerary
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Contact Information */}
+          {/* Contact Information - unchanged */}
           <div className="lg:col-span-1">
             <Card className="mb-6">
               <CardContent className="p-6">
@@ -187,7 +192,7 @@ export default function ContactPage() {
               </CardContent>
             </Card>
 
-            {/* Social Media */}
+            {/* Social Media - unchanged */}
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-xl font-bold text-gray-900 mb-4">Follow Us</h2>
@@ -209,7 +214,7 @@ export default function ContactPage() {
             </Card>
           </div>
 
-          {/* Contact Form */}
+          {/* Contact Form - modified with trip planning fields */}
           <div className="lg:col-span-2">
             <Card>
               <CardContent className="p-6">
@@ -218,106 +223,208 @@ export default function ContactPage() {
                     <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                       <Check className="h-6 w-6 text-green-600" />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Message Sent Successfully!</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Request Submitted Successfully!</h3>
                     <p className="text-sm text-gray-600 mb-6">
-                      Thank you for contacting us. We'll get back to you soon.
+                      Thank you for your trip request. We'll get back to you soon with a perfect itinerary.
                     </p>
                     <Button
                       onClick={() => setSubmitSuccess(false)}
                       className="bg-red-600 hover:bg-red-700"
                     >
-                      Send Another Message
+                      Plan Another Trip
                     </Button>
                   </div>
                 ) : (
                   <>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Tell Us About Your Travel Plans</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                            Full Name *
+                          <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                            First Name *
                           </label>
                           <input
                             type="text"
-                            id="name"
-                            name="name"
-                            value={formData.name}
+                            id="firstName"
+                            name="firstName"
+                            value={formData.firstName}
                             onChange={handleInputChange}
                             required
                             disabled={isSubmitting}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
-                            placeholder="Enter your full name"
+                            placeholder="Enter your first name"
                           />
                         </div>
 
                         <div>
-                          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                            Email Address *
-                          </label>
-                          <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleInputChange}
-                            required
-                            disabled={isSubmitting}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
-                            placeholder="Enter your email address"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                            Phone Number
-                          </label>
-                          <input
-                            type="tel"
-                            id="phone"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
-                            placeholder="Enter your phone number"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                            Subject *
+                          <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                            Last Name
                           </label>
                           <input
                             type="text"
-                            id="subject"
-                            name="subject"
-                            value={formData.subject}
+                            id="lastName"
+                            name="lastName"
+                            value={formData.lastName}
                             onChange={handleInputChange}
-                            required
                             disabled={isSubmitting}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
-                            placeholder="What is this regarding?"
+                            placeholder="Enter your last name"
                           />
                         </div>
                       </div>
 
                       <div>
-                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                          Message *
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address *
                         </label>
-                        <Textarea
-                          id="message"
-                          name="message"
-                          value={formData.message}
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
                           onChange={handleInputChange}
                           required
                           disabled={isSubmitting}
-                          rows={6}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
-                          placeholder="Tell us about your travel plans or any questions you have..."
+                          placeholder="Enter your email address"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          placeholder="+1 (555) 123-4567"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="preferredDestination" className="block text-sm font-medium text-gray-700 mb-2">
+                          Preferred Destination
+                        </label>
+                        <input
+                          type="text"
+                          id="preferredDestination"
+                          name="preferredDestination"
+                          value={formData.preferredDestination}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          placeholder="Where would you like to go?"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label htmlFor="departureDate" className="block text-sm font-medium text-gray-700 mb-2">
+                            Departure Date
+                          </label>
+                          <input
+                            type="date"
+                            id="departureDate"
+                            name="departureDate"
+                            value={formData.departureDate}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          />
+                        </div>
+
+                        <div>
+                          <label htmlFor="returnDate" className="block text-sm font-medium text-gray-700 mb-2">
+                            Return Date
+                          </label>
+                          <input
+                            type="date"
+                            id="returnDate"
+                            name="returnDate"
+                            value={formData.returnDate}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="numberOfTravelers" className="block text-sm font-medium text-gray-700 mb-2">
+                          Number of Travelers
+                        </label>
+                        <select
+                          id="numberOfTravelers"
+                          name="numberOfTravelers"
+                          value={formData.numberOfTravelers}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                        >
+                          <option value="">Select number of travelers</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3-5">3-5</option>
+                          <option value="6-10">6-10</option>
+                          <option value="10+">10+</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="hotelCategory" className="block text-sm font-medium text-gray-700 mb-2">
+                          Hotel Category
+                        </label>
+                        <select
+                          id="hotelCategory"
+                          name="hotelCategory"
+                          value={formData.hotelCategory}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                        >
+                          <option value="">Select your hotel category</option>
+                          <option value="budget">Budget</option>
+                          <option value="standard">Standard</option>
+                          <option value="luxury">Luxury</option>
+                          <option value="boutique">Boutique</option>
+                          <option value="resort">Resort</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label htmlFor="travelInterests" className="block text-sm font-medium text-gray-700 mb-2">
+                          Travel Interests
+                        </label>
+                        <Textarea
+                          id="travelInterests"
+                          name="travelInterests"
+                          value={formData.travelInterests}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          rows={3}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          placeholder="Tell us about your interests (adventure, culture, relaxation, food, etc.)"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="additionalMessage" className="block text-sm font-medium text-gray-700 mb-2">
+                          Additional Message
+                        </label>
+                        <Textarea
+                          id="additionalMessage"
+                          name="additionalMessage"
+                          value={formData.additionalMessage}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          rows={4}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 disabled:opacity-50"
+                          placeholder="Any special requests or additional information?"
                         />
                       </div>
 
@@ -338,12 +445,12 @@ export default function ContactPage() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            Sending...
+                            Submitting...
                           </span>
                         ) : (
                           <>
                             <Send className="w-4 h-4 mr-2" />
-                            Send Message
+                            Submit Request
                           </>
                         )}
                       </Button>
@@ -355,7 +462,7 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Map Section */}
+        {/* Map Section - unchanged */}
         <div className="mt-12">
           <Card>
             <CardContent className="p-0">
@@ -372,7 +479,7 @@ export default function ContactPage() {
           </Card>
         </div>
 
-        {/* FAQ Section */}
+        {/* FAQ Section - unchanged */}
         <div className="mt-12">
           <Card>
             <CardContent className="p-6">
