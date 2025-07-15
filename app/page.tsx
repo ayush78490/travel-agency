@@ -70,8 +70,8 @@ type Testimonial = {
 
 export default function GoSamyatiTravel() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
-
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   const [openPolicy, setOpenPolicy] = useState<string | null>(null)
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
@@ -456,6 +456,7 @@ export default function GoSamyatiTravel() {
               </Card>
               </Link>
 
+              <Link href={`/tours?country=Australia`}>
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
                   src="/images/Australia.jpeg?height=200&width=300"
@@ -468,9 +469,11 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-lg font-semibold">Australia</h3>
                 </div>
               </Card>
+              </Link>
             </div>
 
             <div className="lg:col-span-6 flex flex-col gap-4">
+              <Link href={`/tours?country=Thailand`}>
               <Card className="relative overflow-hidden rounded-lg h-20 sm:h-24 group cursor-pointer">
                 <Image
                   src="/images/mauritius-beach.jpeg"
@@ -483,7 +486,9 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-sm font-semibold">Mauritius</h3>
                 </div>
               </Card>
+              </Link>
 
+              <Link href={`/tours?country=Switzerland`}>
               <Card className="relative overflow-hidden rounded-lg h-64 sm:h-80 lg:flex-1 group cursor-pointer">
                 <Image
                   src="/images/switzerLand.jpeg?height=400&width=600"
@@ -496,9 +501,11 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-xl font-semibold">Switzerland</h3>
                 </div>
               </Card>
+              </Link>
             </div>
 
             <div className="lg:col-span-3 flex flex-col gap-4">
+              <Link href={`/tours?country=Singapore`}>
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
                   src="/images/london.jpeg?height=200&width=300"
@@ -511,7 +518,8 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-lg font-semibold">London</h3>
                 </div>
               </Card>
-
+              </Link>
+              <Link href={`/tours?country=Hong Kong`}>
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
                   src="/images/hongKong.jpeg?height=200&width=300"
@@ -524,6 +532,7 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-lg font-semibold">Hong Kong</h3>
                 </div>
               </Card>
+              </Link>
             </div>
           </div>
         </div>
@@ -831,7 +840,7 @@ export default function GoSamyatiTravel() {
               <h3 className="text-base sm:text-lg font-semibold mb-4">ABOUT GOSAMYATI</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="#" className="hover:underline">
+                  <Link href="about-us" className="hover:underline">
                     About Us
                   </Link>
                 </li>
