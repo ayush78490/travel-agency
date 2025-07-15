@@ -840,7 +840,7 @@ export default function GoSamyatiTravel() {
               <h3 className="text-base sm:text-lg font-semibold mb-4">ABOUT GOSAMYATI</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link href="about-us" className="hover:underline">
+                  <Link href="/about-us" className="hover:underline">
                     About Us
                   </Link>
                 </li>
