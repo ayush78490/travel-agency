@@ -8,19 +8,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, MapPin, Clock, Users } from "lucide-react"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
+import { fetchTourPackages } from "@/utils/api" // ← Adjust path as needed
+import { TourPackage } from "@/types"
 
 type Tour = {
-  id: number;
-  title: string;
-  location: string;
-  duration: string;
-  price: string;
-  rating: number;
-  reviews: number;
-  image: string;
-  category: string;
-  groupSize: string;
-  highlights: string[];
+  id: number
+  title: string
+  location: string
+  duration: string
+  price: string
+  rating: number
+  reviews: number
+  image: string
+  category: string
+  groupSize: string
+  highlights: string[]
 }
 
 export default function ToursPage() {
@@ -29,60 +31,7 @@ export default function ToursPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const fallbackTours: Tour[] = [
-    {
-      id: 1,
-      title: "Heritage Palace Tour",
-      location: "Rajasthan, India",
-      duration: "5 Days",
-      price: "₹45,000",
-      rating: 4.8,
-      reviews: 124,
-      image: "/images/heritage-hotel.webp",
-      category: "heritage",
-      groupSize: "2-15 people",
-      highlights: ["Palace visits", "Cultural shows", "Local cuisine"],
-    },
-    {
-      id: 2,
-      title: "Mauritius Beach Paradise",
-      location: "Mauritius",
-      duration: "7 Days",
-      price: "₹85,000",
-      rating: 4.9,
-      reviews: 89,
-      image: "/images/mauritius-beach.jpeg",
-      category: "beach",
-      groupSize: "2-12 people",
-      highlights: ["Beach resorts", "Water sports", "Island hopping"],
-    },
-    {
-      id: 3,
-      title: "Port Louis Cultural Experience",
-      location: "Mauritius",
-      duration: "3 Days",
-      price: "₹35,000",
-      rating: 4.7,
-      reviews: 67,
-      image: "/images/portlouis.jpeg",
-      category: "culture",
-      groupSize: "4-20 people",
-      highlights: ["City tours", "Markets", "Museums"],
-    },
-    {
-      id: 4,
-      title: "Everest Base Camp Trek",
-      location: "Nepal",
-      duration: "14 Days",
-      price: "₹125,000",
-      rating: 4.9,
-      reviews: 156,
-      image: "/images/mount-everest.webp",
-      category: "adventure",
-      groupSize: "6-12 people",
-      highlights: ["Mountain trekking", "Sherpa culture", "Scenic views"],
-    },
-  ]
+  const fallbackTours: Tour[] = [/* your fallbackTours array */]
 
   const categories = [
     { id: "all", name: "All Tours" },
@@ -93,60 +42,40 @@ export default function ToursPage() {
   ]
 
   useEffect(() => {
-    const fetchTours = async () => {
+    const loadTours = async () => {
       try {
         setIsLoading(true)
         setError(null)
 
-        const response = await fetch('/api/tours')
+        const data: TourPackage[] = await fetchTourPackages()
 
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`)
-        }
+        const transformed: Tour[] = data.map((pkg) => ({
+          id: pkg.id,
+          title: pkg.title,
+          location: pkg.country || "Unknown Location",
+          duration: `${pkg.days} Days`,
+          price: pkg.price,
+          rating: pkg.rating,
+          reviews: pkg.review,
+          image: pkg.image1 || "/images/default-tour.jpg",
+          category: pkg.category.toLowerCase(),
+          groupSize: `${pkg.groupSize || 1} people`,
+          highlights: pkg.highlights,
+        }))
 
-        const data = await response.json()
-        console.log("API data:", data)
-
-        const transformedTours: Tour[] = Array.isArray(data)
-          ? data.map((item: any) => ({
-              id: item.id || 0,
-              title: item.title || 'Untitled Tour',
-              location: item.country || 'Unknown Location',
-              duration: `${item.days || 0} Days`,
-              price: `₹${item.price || '0'}`,
-              rating: 4.5,
-              reviews: 0,
-              image: item.image1
-                ? `https://ecomlancers.com/travel_website/uploads/${item.image1}`
-                : '/images/default-tour.jpg',
-              category: item.category?.toLowerCase() || 'other',
-              groupSize: '2-12 people',
-              highlights: Array.isArray(item.highlights)
-                ? item.highlights.filter((h: any) => !!h)
-                : ['Experience local culture'],
-            }))
-          : []
-
-        console.log("Transformed tours:", transformedTours)
-
-        if (transformedTours.length === 0) {
-          console.warn("No valid tours in API response. Using fallback.")
-          setTours(fallbackTours)
-        } else {
-          setTours(transformedTours)
-        }
-
+        setTours(transformed.length > 0 ? transformed : fallbackTours)
       } catch (err) {
-        console.error('Failed to fetch tours:', err)
-        setError(err instanceof Error ? err.message : 'Unknown error occurred')
+        console.error("Tour fetch failed:", err)
+        setError(err instanceof Error ? err.message : "Unknown error")
         setTours(fallbackTours)
       } finally {
         setIsLoading(false)
       }
     }
 
-    fetchTours()
+    loadTours()
   }, [])
+
 
   const filteredTours = selectedCategory === "all"
     ? tours
