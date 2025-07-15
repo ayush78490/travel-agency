@@ -10,10 +10,12 @@ import { Star, MapPin, Clock, Users } from "lucide-react"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
 import { fetchTourPackages } from "@/utils/api" // ← Adjust path as needed
 import { TourPackage } from "@/types"
+import { useSearchParams } from "next/navigation"
 
 type Tour = {
   id: number
   title: string
+  countery: string
   location: string
   duration: string
   price: string
@@ -26,6 +28,8 @@ type Tour = {
 }
 
 export default function ToursPage() {
+  const searchParams = useSearchParams()
+  const countryParam = searchParams.get("country")?.toLowerCase()
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [tours, setTours] = useState<Tour[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -52,6 +56,7 @@ export default function ToursPage() {
         const transformed: Tour[] = data.map((pkg) => ({
           id: pkg.id,
           title: pkg.title,
+          countery: pkg.country || "Unknown Country",
           location: pkg.country || "Unknown Location",
           duration: `${pkg.days} Days`,
           price: pkg.price,
@@ -77,11 +82,12 @@ export default function ToursPage() {
   }, [])
 
 
-  const filteredTours = selectedCategory === "all"
-    ? tours
-    : tours.filter((tour) =>
-        tour.category?.toLowerCase() === selectedCategory.toLowerCase()
-      )
+  const filteredTours = tours.filter((tour) => {
+  const matchesCategory = selectedCategory === "all" || tour.category?.toLowerCase() === selectedCategory.toLowerCase()
+  const matchesCountry = !countryParam || tour.location?.toLowerCase().includes(countryParam)
+  return matchesCategory && matchesCountry
+  })
+
 
   if (isLoading) {
     return (

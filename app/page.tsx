@@ -408,10 +408,11 @@ export default function GoSamyatiTravel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 h-auto lg:h-96">
             <div className="lg:col-span-3 flex flex-col gap-4">
-              <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
-                <Image
-                  src="/images/Kenya.jpeg?height=200&width=300"
-                  alt="Kenya"
+              <Link href={`/tours?country=Switzerland`}>
+                <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
+                  <Image
+                    src="/images/Kenya.jpeg?height=200&width=300"
+                    alt="Kenya"
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -420,6 +421,7 @@ export default function GoSamyatiTravel() {
                   <h3 className="text-lg font-semibold">Kenya</h3>
                 </div>
               </Card>
+              </Link>
 
               <Card className="relative overflow-hidden rounded-lg h-48 lg:flex-1 group cursor-pointer">
                 <Image
