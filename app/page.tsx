@@ -36,8 +36,43 @@ type TourPackage = {
   destination?: string;
 };
 
+type Testimonial = {
+  name: string;
+  location: string;
+  text: string;
+  rating?: number;
+  image?: string;
+};
+
+  const fallbackTestimonials = [
+  {
+    name: "John Smith",
+    location: "Tourist",
+    rating: 5,
+    text: "I had an amazing experience with this company. The service was top-notch, and the staff was incredibly friendly. I highly recommend them!",
+    image: "/placeholder.svg?height=60&width=60",
+  },
+  {
+    name: "Sarah Johnson",
+    location: "Traveler",
+    rating: 5,
+    text: "Excellent service and great value for money. The tour was well organized and exceeded my expectations.",
+    image: "/placeholder.svg?height=60&width=60",
+  },
+  {
+    name: "Mike Wilson",
+    location: "Explorer",
+    rating: 5,
+    text: "Professional team with great attention to detail. Will definitely book with them again!",
+    image: "/placeholder.svg?height=60&width=60",
+  },
+];
+
 export default function GoSamyatiTravel() {
-  const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const [testimonials, setTestimonials] = useState<Testimonial[]>(fallbackTestimonials);
+
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
   const [openPolicy, setOpenPolicy] = useState<string | null>(null)
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -62,26 +97,8 @@ export default function GoSamyatiTravel() {
     },
   ]
 
-  const testimonials = [
-    {
-      name: "John Smith",
-      location: "Tourist",
-      rating: 5,
-      text: "I had an amazing experience with this company. The service was top-notch, and the staff was incredibly friendly. I highly recommend them!",
-    },
-    {
-      name: "Sarah Johnson",
-      location: "Traveler",
-      rating: 5,
-      text: "Excellent service and great value for money. The tour was well organized and exceeded my expectations.",
-    },
-    {
-      name: "Mike Wilson",
-      location: "Explorer",
-      rating: 5,
-      text: "Professional team with great attention to detail. Will definitely book with them again!",
-    },
-  ]
+
+
 
   const fallbackPackages = [
     {
@@ -167,6 +184,22 @@ export default function GoSamyatiTravel() {
     }, 6000)
     return () => clearInterval(timer)
   }, [heroSlides.length])
+
+  useEffect(() => {
+  const loadTestimonials = async () => {
+    try {
+      const res = await fetch("/api/testimonials");
+      const result = await res.json();
+      setTestimonials(Array.isArray(result.data) ? result.data : []);
+    } catch (err) {
+      console.error("Failed to fetch testimonials:", err);
+    }
+  };
+
+    loadTestimonials();
+  }, []);
+
+
 
   const nextHeroSlide = () => {
     setCurrentHeroSlide((prev) => (prev + 1) % heroSlides.length)
@@ -623,47 +656,79 @@ export default function GoSamyatiTravel() {
     </section>
 
       <section className="py-16 relative">
-        <div className="absolute inset-0">
-          <Image src="/images/testimonials-bg.png" alt="Testimonials Background" fill className="object-cover" />
-          <div className="absolute inset-0 bg-white bg-opacity-90"></div>
+  <div className="absolute inset-0">
+    <Image
+      src="/images/testimonials-bg.png"
+      alt="Testimonials Background"
+      fill
+      className="object-cover"
+    />
+    <div className="absolute inset-0 bg-white bg-opacity-90"></div>
+  </div>
+
+  <div className="container mx-auto px-4 text-center relative z-10">
+    <h2 className="text-3xl font-bold mb-12 text-gray-900">Testimonials</h2>
+
+    {testimonials.length > 0 ? (
+      <div className="relative max-w-2xl mx-auto">
+        {/* Avatar */}
+        <div className="bg-white rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center overflow-hidden shadow-lg">
+          <Image
+            src={
+              testimonials[currentTestimonial]?.image ||
+              "/placeholder.svg?height=60&width=60"
+            }
+            alt={testimonials[currentTestimonial]?.name || "Customer"}
+            width={60}
+            height={60}
+            className="rounded-full object-cover"
+          />
         </div>
 
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <h2 className="text-3xl font-bold mb-12 text-gray-900">Testimonials</h2>
-          <div className="relative max-w-2xl mx-auto">
-            <div className="bg-white rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center overflow-hidden shadow-lg">
-              <Image
-                src="/placeholder.svg?height=60&width=60"
-                alt="Customer"
-                width={60}
-                height={60}
-                className="rounded-full"
-              />
-            </div>
-            <div className="bg-red-600 text-white px-4 py-2 rounded-full inline-block mb-4">Excellent Service</div>
-            <p className="text-gray-700 mb-6 text-lg leading-relaxed bg-white bg-opacity-80 rounded-lg p-6 shadow-sm">
-              {testimonials[currentTestimonial].text}
-            </p>
-            <div className="flex justify-center mb-2">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-              ))}
-            </div>
-            <h4 className="font-semibold text-gray-900">{testimonials[currentTestimonial].name}</h4>
-            <p className="text-gray-600">{testimonials[currentTestimonial].location}</p>
-
-            <div className="flex justify-center mt-8 space-x-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full ${index === currentTestimonial ? "bg-red-600" : "bg-gray-400"}`}
-                />
-              ))}
-            </div>
-          </div>
+        {/* Label */}
+        <div className="bg-red-600 text-white px-4 py-2 rounded-full inline-block mb-4">
+          Excellent Service
         </div>
-      </section>
+
+        {/* Testimonial Text */}
+        <p className="text-gray-700 mb-6 text-lg leading-relaxed bg-white bg-opacity-80 rounded-lg p-6 shadow-sm">
+          {testimonials[currentTestimonial]?.text}
+        </p>
+
+        {/* Stars */}
+        <div className="flex justify-center mb-2">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+          ))}
+        </div>
+
+        {/* Name + Location */}
+        <h4 className="font-semibold text-gray-900">
+          {testimonials[currentTestimonial]?.name}
+        </h4>
+        <p className="text-gray-600">
+          {testimonials[currentTestimonial]?.location}
+        </p>
+
+        {/* Dot Navigation */}
+        <div className="flex justify-center mt-8 space-x-2">
+          {testimonials.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentTestimonial(index)}
+              className={`w-3 h-3 rounded-full ${
+                index === currentTestimonial ? "bg-red-600" : "bg-gray-400"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    ) : (
+      <p className="text-gray-500 text-lg">Loading testimonials...</p>
+    )}
+  </div>
+</section>
+
 
       <section className="py-12 sm:py-16">
         <div className="container mx-auto px-4 sm:px-6">

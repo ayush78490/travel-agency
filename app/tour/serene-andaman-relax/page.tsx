@@ -1,99 +1,198 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ChevronDown, ChevronUp, Phone, Mail, MapPin, Bed, Car, Utensils, Star } from "lucide-react"
+import { TourPackage } from "@/types"
 
-export default function SereneAndamanRelaxPage() {
-  const [openDay, setOpenDay] = useState<string | null>("DAY 5")
-  const [openPolicy, setOpenPolicy] = useState<string | null>(null)
-
-  const tourDetails = {
-    id: "serene-andaman-relax",
-    title: "SERENE ANDAMAN || RELAX YOURSELF",
-    location: "Andaman & Nicobar Islands",
-    duration: "5 Days & 4 Nights",
-    price: "INR 35,000",
-    rating: 4.8,
-    reviews: 156,
-    image: "/images/serene-andaman.png",
-    category: "Beach Paradise",
+async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
+  try {
+    const queryString = new URLSearchParams(params).toString()
+    const url = `/api/tours?${queryString}`
+    
+    const response = await fetch(url)
+    
+    if (!response.ok) {
+      throw new Error(`API request failed with status ${response.status}`)
+    }
+    
+    const responseData = await response.json()
+    
+    const packageData = Array.isArray(responseData) 
+      ? responseData 
+      : responseData?.data || []
+    
+    if (!Array.isArray(packageData)) {
+      console.warn('Unexpected API response format:', responseData)
+      return []
+    }
+    
+    return packageData.map(item => ({
+      id: ensureNumber(item.id, 0),
+      title: ensureString(item.title, 'Untitled Tour'),
+      days: ensureString(item.days, '0'),
+      nights: ensureString(item.nights, '0'),
+      price: formatPrice(item.price),
+      image1: processMainImageUrl(item.image1),
+      image2: processOptionalImageUrl(item.image2),
+      image3: processOptionalImageUrl(item.image3),
+      image4: processOptionalImageUrl(item.image4),
+      image5: processOptionalImageUrl(item.image5),
+      category: ensureString(item.category, 'Other'),
+      country: optionalString(item.country),
+      destination: optionalString(item.destination),
+      highlights: processHighlights(item.highlights),
+      rating: clampNumber(ensureNumber(item.rating, 4.0), 0, 5),
+      review: ensureNumber(item.review, 0),
+      groupSize: ensureNumber(item.groupSize, 1)
+    }))
+  } catch (error) {
+    console.error('Error fetching tour packages:', error)
+    return []
   }
+}
+
+function processMainImageUrl(imageUrl: unknown): string {
+  if (!imageUrl) return '/images/default-tour.jpg'
+  const urlString = String(imageUrl)
+  return urlString.startsWith('http') 
+    ? urlString
+    : `https://ecomlancers.com/travel_website/uploads/${encodeURIComponent(urlString)}`
+}
+
+function processOptionalImageUrl(imageUrl: unknown): string | undefined {
+  if (!imageUrl) return undefined
+  const urlString = String(imageUrl)
+  return urlString.startsWith('http') 
+    ? urlString
+    : `https://ecomlancers.com/travel_website/uploads/${encodeURIComponent(urlString)}`
+}
+
+function ensureNumber(value: unknown, defaultValue: number): number {
+  const num = Number(value)
+  return isNaN(num) ? defaultValue : num
+}
+
+function ensureString(value: unknown, defaultValue: string): string {
+  return value !== undefined && value !== null 
+    ? String(value) 
+    : defaultValue
+}
+
+function optionalString(value: unknown): string | undefined {
+  return value !== undefined && value !== null 
+    ? String(value) 
+    : undefined
+}
+
+function formatPrice(price: unknown): string {
+  if (!price) return 'Price on request'
+  const numericValue = String(price).replace(/[^0-9.]/g, '')
+  return `₹${numericValue}`
+}
+
+function processHighlights(highlights: unknown): string[] {
+  if (!Array.isArray(highlights)) {
+    return ['Experience local culture']
+  }
+  return highlights
+    .filter(item => item !== undefined && item !== null)
+    .map(String)
+}
+
+function clampNumber(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max)
+}
+
+export default function TourPackagePage({ params }: { params: { id: string } }) {
+  const [openDay, setOpenDay] = useState<string | null>("DAY 1")
+  const [openPolicy, setOpenPolicy] = useState<string | null>(null)
+  const [tourPackage, setTourPackage] = useState<TourPackage | null>(null)
+  const [relatedPackages, setRelatedPackages] = useState<TourPackage[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const packages = await fetchTourPackages({ id: params.id })
+        if (packages.length > 0) {
+          setTourPackage(packages[0])
+          const related = await fetchTourPackages({ 
+            category: packages[0].category,
+            exclude: packages[0].id
+          })
+          setRelatedPackages(related.slice(0, 4))
+        }
+      } catch (error) {
+        console.error("Failed to load tour packages:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [params.id])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-600"></div>
+      </div>
+    )
+  }
+
+  if (!tourPackage) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-bold text-red-600 mb-2">Tour Package Not Found</h2>
+          <p className="text-gray-600 mb-4">The requested tour package could not be loaded.</p>
+          <Link href="/tours">
+            <Button className="bg-red-600 hover:bg-red-700 text-white">
+              Browse All Tours
+            </Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const duration = `${tourPackage.days} Days & ${tourPackage.nights} Nights`
 
   const itinerary = [
     {
       day: "DAY 1",
-      title: "LOREM IPSUM UMMM LA TA",
-      content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      title: "ARRIVAL AND WELCOME",
+      content: "Arrive at the destination airport and transfer to your hotel. Spend the rest of the day at leisure."
     },
     {
       day: "DAY 2",
-      title: "LOREM IPSUM UMMM LA TA",
-      content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      title: "EXPLORATION DAY",
+      content: "Full day of sightseeing including the most popular attractions in the area."
     },
     {
       day: "DAY 3",
-      title: "LOREM IPSUM UMMM LA TA",
-      content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      title: "ADVENTURE ACTIVITIES",
+      content: "Experience thrilling activities unique to this destination."
     },
     {
       day: "DAY 4",
-      title: "LOREM IPSUM UMMM LA TA",
-      content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+      title: "LEISURE DAY",
+      content: "Free day to relax or explore on your own. Optional activities available."
     },
     {
       day: "DAY 5",
-      title: "LOREM IPSUM UMMM LA TA",
-      content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-    }
-  ]
-
-  const highlights = [
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-    "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.",
-    "It has survived not only five centuries, but also the leap into electronic typesetting.",
-    "It was popularised in the 1960s with the release of Letraset sheets containing.",
-    "More recently with desktop publishing software like Aldus PageMaker."
-  ]
-
-  const packages = [
-    {
-      id: "london-package-1",
-      title: "LONDON PACKAGE",
-      duration: "5 Nights & 6 Days",
-      price: "INR 40,000",
-      image: "/images/london.jpeg?height=120&width=160",
-    },
-    {
-      id: "london-package-2",
-      title: "LONDON PACKAGE",
-      duration: "5 Nights & 6 Days",
-      price: "INR 40,000",
-      image: "/images/london.jpeg?height=120&width=160",
-    },
-    {
-      id: "london-package-3",
-      title: "LONDON PACKAGE",
-      duration: "5 Nights & 6 Days",
-      price: "INR 40,000",
-      image: "/images/london.jpeg?height=120&width=160",
-    },
-    {
-      id: "london-package-4",
-      title: "LONDON PACKAGE",
-      duration: "5 Nights & 6 Days",
-      price: "INR 40,000",
-      image: "/images/london.jpeg?height=120&width=160",
+      title: "DEPARTURE",
+      content: "Transfer to the airport for your return flight with wonderful memories."
     }
   ]
 
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link href="/" className="flex items-center">
@@ -127,11 +226,15 @@ export default function SereneAndamanRelaxPage() {
         </div>
       </header>
 
-      {/* Hero Image Section */}
       <section className="relative h-48 md:h-64">
-        <Image src="/images/serene-andaman.png" alt="Serene Andaman" fill className="object-cover" priority />
+        <Image 
+          src={tourPackage.image1} 
+          alt={tourPackage.title} 
+          fill 
+          className="object-cover" 
+          priority 
+        />
         <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-
         <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
           {[...Array(5)].map((_, i) => (
             <div key={i} className={`w-2 h-2 rounded-full ${i === 2 ? "bg-red-600" : "bg-white bg-opacity-60"}`} />
@@ -141,29 +244,27 @@ export default function SereneAndamanRelaxPage() {
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Content */}
           <div className="lg:col-span-3">
-            {/* Tour Header */}
             <div className="mb-6">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                 <div className="flex-1">
-                  <Badge className="bg-orange-100 text-orange-800 mb-2 text-xs">{tourDetails.duration}</Badge>
-                  <h1 className="text-2xl md:text-3xl font-bold text-red-600 mb-2">{tourDetails.title}</h1>
+                  <Badge className="bg-orange-100 text-orange-800 mb-2 text-xs">{duration}</Badge>
+                  <h1 className="text-2xl md:text-3xl font-bold text-red-600 mb-2">{tourPackage.title}</h1>
 
                   <div className="flex items-center mb-3">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
+                      <Star 
+                        key={i} 
+                        className={`w-4 h-4 ${i < Math.floor(tourPackage.rating) ? "text-yellow-400 fill-current" : "text-gray-300"}`} 
+                      />
                     ))}
-                    <span className="ml-2 text-sm text-gray-600">({tourDetails.reviews} reviews)</span>
+                    <span className="ml-2 text-sm text-gray-600">({tourPackage.review} reviews)</span>
                   </div>
 
                   <p className="text-gray-700 leading-relaxed text-sm mb-4">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                    industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type
-                    and scrambled it to make a type specimen book.
+                    {tourPackage.highlights?.join(" ") || "Explore this amazing destination with our expertly crafted tour package."}
                   </p>
 
-                  {/* Action Buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 mb-4">
                     <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 text-sm font-semibold">
                       BOOK NOW
@@ -180,24 +281,23 @@ export default function SereneAndamanRelaxPage() {
 
                   <div className="flex items-center text-red-600 text-sm">
                     <Phone className="w-4 h-4 mr-2" />
-                    <span className="font-semibold">{tourDetails.price}</span>
+                    <span className="font-semibold">{tourPackage.price}</span>
                   </div>
                 </div>
 
                 <div className="mt-4 md:mt-0 md:ml-6">
                   <div className="bg-gray-50 p-4 rounded-lg text-center min-w-[140px]">
                     <div className="text-xs text-gray-600 mb-1">Starts from</div>
-                    <div className="text-xl font-bold text-red-600">{tourDetails.price}</div>
+                    <div className="text-xl font-bold text-red-600">{tourPackage.price}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Trip Highlights */}
             <div className="mb-6">
               <h2 className="text-lg font-bold text-red-600 mb-3">TRIP HIGHLIGHTS</h2>
               <ul className="space-y-2">
-                {highlights.map((highlight, index) => (
+                {tourPackage.highlights?.map((highlight, index) => (
                   <li key={index} className="flex items-start text-sm">
                     <span className="w-1.5 h-1.5 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span className="text-gray-700">{highlight}</span>
@@ -206,7 +306,6 @@ export default function SereneAndamanRelaxPage() {
               </ul>
             </div>
 
-            {/* Itinerary */}
             <div className="mb-6">
               <h2 className="text-lg font-bold text-red-600 mb-3">ITINERARY</h2>
               <div className="space-y-1">
@@ -230,7 +329,6 @@ export default function SereneAndamanRelaxPage() {
               </div>
             </div>
 
-            {/* Inclusion/Exclusion */}
             <div className="mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -295,43 +393,50 @@ export default function SereneAndamanRelaxPage() {
               </div>
             </div>
 
-            {/* Know Before You Go */}
             <div className="mb-6">
               <h3 className="text-lg font-bold text-red-600 mb-3">KNOW BEFORE YOU GO</h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex items-start">
                   <span className="w-1.5 h-1.5 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                  Check visa requirements well in advance of your travel date.
                 </li>
                 <li className="flex items-start">
                   <span className="w-1.5 h-1.5 bg-red-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                  Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+                  Local currency is recommended for small purchases and tips.
                 </li>
               </ul>
             </div>
 
-            {/* Related Packages */}
-            <div className="mb-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {packages.map((pkg) => (
-                  <div key={pkg.id} className="text-center">
-                    <div className="relative h-20 mb-2 rounded overflow-hidden">
-                      <Image src={pkg.image} alt={pkg.title} fill className="object-cover" />
+            {relatedPackages.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-bold text-red-600 mb-3">RELATED PACKAGES</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {relatedPackages.map((pkg) => (
+                    <div key={pkg.id} className="text-center">
+                      <div className="relative h-20 mb-2 rounded overflow-hidden">
+                        <Image 
+                          src={pkg.image1} 
+                          alt={pkg.title} 
+                          fill 
+                          className="object-cover" 
+                        />
+                      </div>
+                      <Badge variant="outline" className="text-xs mb-1 px-2 py-0.5">
+                        {pkg.days} Days & {pkg.nights} Nights
+                      </Badge>
+                      <h4 className="font-bold text-red-600 text-xs mb-1">{pkg.title}</h4>
+                      <p className="text-xs text-gray-600 mb-2">{pkg.price}</p>
+                      <Link href={`/tours/${pkg.id}`}>
+                        <Button className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 w-full h-7">
+                          View Details
+                        </Button>
+                      </Link>
                     </div>
-                    <Badge variant="outline" className="text-xs mb-1 px-2 py-0.5">
-                      {pkg.duration}
-                    </Badge>
-                    <h4 className="font-bold text-red-600 text-xs mb-1">{pkg.title}</h4>
-                    <p className="text-xs text-gray-600 mb-2">{pkg.price}</p>
-                    <Button className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 w-full h-7">
-                      Book Now
-                    </Button>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Policies */}
             <div className="space-y-3">
               <Collapsible
                 open={openPolicy === "confirmation"}
@@ -347,7 +452,7 @@ export default function SereneAndamanRelaxPage() {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="p-3 bg-white border-t text-sm">
                   <p className="text-gray-600">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Your booking will be confirmed within 24 hours of receiving payment. A confirmation email with all details will be sent to you.
                   </p>
                 </CollapsibleContent>
               </Collapsible>
@@ -366,7 +471,7 @@ export default function SereneAndamanRelaxPage() {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="p-3 bg-white border-t text-sm">
                   <p className="text-gray-600">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    A 30% deposit is required at the time of booking. The remaining balance must be paid 30 days before departure.
                   </p>
                 </CollapsibleContent>
               </Collapsible>
@@ -385,22 +490,20 @@ export default function SereneAndamanRelaxPage() {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="p-3 bg-white border-t text-sm">
                   <p className="text-gray-600">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                    Cancellations made 60+ days before departure: full refund. 30-60 days: 50% refund. Less than 30 days: no refund.
                   </p>
                 </CollapsibleContent>
               </Collapsible>
             </div>
           </div>
 
-          {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-4 space-y-4">
-              {/* Quick Booking Card */}
               <div className="bg-white border rounded-lg p-4 shadow-sm">
                 <h3 className="text-sm font-bold text-red-600 mb-4 text-center">Quick Booking</h3>
                 <div className="space-y-4">
                   <div className="text-center">
-                    <div className="text-xl font-bold text-red-600">{tourDetails.price}</div>
+                    <div className="text-xl font-bold text-red-600">{tourPackage.price}</div>
                     <div className="text-xs text-gray-600">per person</div>
                   </div>
 
@@ -419,7 +522,6 @@ export default function SereneAndamanRelaxPage() {
                 </div>
               </div>
 
-              {/* Contact Card */}
               <div className="bg-white border rounded-lg p-4 shadow-sm">
                 <h3 className="text-sm font-bold text-red-600 mb-4 text-center">Need Help?</h3>
                 <div className="space-y-3 text-sm">
@@ -438,7 +540,6 @@ export default function SereneAndamanRelaxPage() {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="bg-red-600 text-white py-6 mt-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
