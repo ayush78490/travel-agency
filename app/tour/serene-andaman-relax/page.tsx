@@ -48,7 +48,12 @@ async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
       highlights: processHighlights(item.highlights),
       rating: clampNumber(ensureNumber(item.rating, 4.0), 0, 5),
       review: ensureNumber(item.review, 0),
-      groupSize: ensureNumber(item.groupSize, 1)
+      groupSize: ensureNumber(item.groupSize, 1),
+      itinerary: item.iternary ? item.iternary.map((day: any) => ({
+        day: ensureString(day.day, 'DAY 1'),
+        title: ensureString(day.location, 'Untitled Location'),
+        content: ensureString(day.iternary_detail, 'No details available')
+      })) : []
     }))
   } catch (error) {
     console.error('Error fetching tour packages:', error)
@@ -119,6 +124,7 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
     async function loadData() {
       try {
         const packages = await fetchTourPackages({ id: params.id })
+        console.log('Fetched package data:', packages[0]?.itinerary);
         if (packages.length > 0) {
           setTourPackage(packages[0])
           const related = await fetchTourPackages({ 
@@ -307,9 +313,10 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
             </div>
 
             <div className="mb-6">
-              <h2 className="text-lg font-bold text-red-600 mb-3">ITINERARY</h2>
-              <div className="space-y-1">
-                {itinerary.map((day) => (
+            <h2 className="text-lg font-bold text-red-600 mb-3">ITINERARY</h2>
+            <div className="space-y-1">
+              {tourPackage.itinerary.length > 0 ? (
+                tourPackage.itinerary.map((day) => (
                   <Collapsible
                     key={day.day}
                     open={openDay === day.day}
@@ -325,9 +332,12 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
                       <p className="text-gray-700 leading-relaxed">{day.content}</p>
                     </CollapsibleContent>
                   </Collapsible>
-                ))}
-              </div>
+                ))
+              ) : (
+                <p className="text-gray-600 text-sm p-3">No itinerary details available for this tour.</p>
+              )}
             </div>
+          </div>
 
             <div className="mb-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -546,7 +556,11 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
             <div>
               <h3 className="text-sm font-semibold mb-3">ABOUT GOSAMYATI</h3>
               <ul className="space-y-1 text-xs">
-                <li>About Us</li>
+                <li>
+                  <Link href="/about-us" className="hover:underline">
+                    About US
+                  </Link>
+                </li>
                 <li>We are Hiring</li>
                 <li>Gosamyati Review</li>
                 <li>Terms and Conditions</li>

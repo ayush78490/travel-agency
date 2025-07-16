@@ -16,4 +16,9 @@ export type TourPackage = {
   rating: number;
   review: number;
   groupSize: number;
+  itinerary: {
+    day: string;
+    title: string;
+    content: string;
+  }[];
 };

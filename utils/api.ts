@@ -41,7 +41,12 @@ export async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
       highlights: processHighlights(item.highlights),
       rating: clampNumber(ensureNumber(item.rating, 4.0), 0, 5),
       review: ensureNumber(item.review, 0),
-      groupSize: ensureNumber(item.groupSize, 1)
+      groupSize: ensureNumber(item.groupSize, 1),
+      itinerary: item.itinerary ? item.itinerary.map((day: any) => ({
+        day: ensureString(day.day, 'DAY 1'),
+        title: ensureString(day.title, 'Untitled Day'),
+        content: ensureString(day.content, 'No details available')
+      })) : []
     }));
   } catch (error) {
     console.error('Error fetching tour packages:', error);
