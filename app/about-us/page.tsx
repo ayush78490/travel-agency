@@ -2,6 +2,11 @@
 import React, { useState } from 'react';
 import { X, MapPin, Users, Calendar, MessageSquare, Star, Heart, Globe, Award, Link } from 'lucide-react';
 
+import Header from '@/components/header';
+import Footer from '@/components/footer';
+
+import { LinkButton } from '@/components/ui/linkButton';
+
 export default function TravelWebsite() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -11,6 +16,10 @@ export default function TravelWebsite() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
+      <Header />
+
+      {/* Hero Section */}
+
       <header className="bg-red-600 text-white py-16 px-4">
         <div className="max-w-6xl mx-auto text-center">
           <div className="text-sm mb-4">TRAVEL</div>
@@ -23,15 +32,18 @@ export default function TravelWebsite() {
             that connect people with the world's most incredible destinations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={openPopup}
-              className="bg-white text-red-600 px-8 py-3 rounded font-semibold hover:bg-gray-100 transition-colors"
+            <LinkButton
+              href="/contact"
+              className="bg-white text-red-600 px-8 py-3 rounded font-semibold hover:bg-gray-100 transition-colors inline-block text-center"
             >
               Plan Your Trip
-            </button>
-            <button className="border border-white text-white px-8 py-3 rounded font-semibold hover:bg-white hover:text-red-600 transition-colors">
+            </LinkButton>
+            <LinkButton
+              href="/tours"
+              className="border border-white text-white px-8 py-3 rounded font-semibold hover:bg-white hover:text-red-600 transition-colors"
+            >
               Explore More
-            </button>
+            </LinkButton>
           </div>
         </div>
       </header>
@@ -239,193 +251,26 @@ export default function TravelWebsite() {
             destination and we'll make it happen. The world is waiting for you.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={openPopup}
-              className="bg-white text-red-600 px-8 py-3 rounded font-semibold hover:bg-gray-100 transition-colors"
+            <LinkButton
+              href="/contact"
+              className="bg-white text-red-600 px-8 py-3 rounded font-semibold hover:bg-gray-100 transition-colors inline-block text-center"
             >
-              Plan Your Trip
-            </button>
-            
-            <button className="border border-white text-white px-8 py-3 rounded font-semibold hover:bg-white hover:text-red-600 transition-colors">
-              Contact Our Team
-            </button>
+              Contact our team
+            </LinkButton>
+            <LinkButton
+              href="/tours"
+              className="border border-white text-white px-8 py-3 rounded font-semibold hover:bg-white hover:text-red-600 transition-colors"
+            >
+              Explore More Tours
+            </LinkButton>
           </div>
         </div>
       </section>
 
-      {/* Popup Modal */}
-      {isPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b p-4 flex justify-between items-center">
-              <h2 className="text-xl font-semibold">Plan Your Dream Trip</h2>
-              <button 
-                onClick={closePopup}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            
-            <div className="p-6">
-              <p className="text-gray-600 mb-6">
-                Tell us about your travel preferences and we'll help you
-                create the perfect itinerary
-              </p>
-              
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      placeholder="John"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      placeholder="Doe"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    placeholder="john.doe@example.com"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    placeholder="(555) 123-4567"
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Preferred Destination
-                  </label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                    <input
-                      type="text"
-                      className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                      placeholder="Where would you like to go?"
-                    />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Departure Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Return Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Number of Travelers
-                  </label>
-                  <div className="relative">
-                    <Users className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                    <select className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                      <option>Select number of travelers</option>
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5+</option>
-                    </select>
-                  </div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Hotel Category
-                  </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                    <option>Select your hotel category</option>
-                    <option>Budget (2-3 stars)</option>
-                    <option>Standard (3-4 stars)</option>
-                    <option>Luxury (4-5 stars)</option>
-                    <option>Premium (5 stars)</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Travel Interests
-                  </label>
-                  <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    rows={3}
-                    placeholder="Tell us about your interests (adventure, culture, relaxation, food, etc.)"
-                  ></textarea>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Additional Message
-                  </label>
-                  <textarea
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
-                    rows={3}
-                    placeholder="Any special requests or additional information?"
-                  ></textarea>
-                </div>
-                
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={closePopup}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
-                  >
-                    Submit Request
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Footer */}
+
+      <Footer />
+
     </div>
   );
 }
