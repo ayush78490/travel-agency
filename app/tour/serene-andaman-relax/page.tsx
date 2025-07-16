@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
+import Image, {StaticImageData} from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -62,11 +62,13 @@ async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
 }
 
 function processMainImageUrl(imageUrl: unknown): string {
-  if (!imageUrl) return '/images/default-tour.jpg'
-  const urlString = String(imageUrl)
+  if (!imageUrl || String(imageUrl).trim() === '') {
+    return '/images/default-tour.jpg';
+  }
+  const urlString = String(imageUrl);
   return urlString.startsWith('http') 
     ? urlString
-    : `https://ecomlancers.com/travel_website/uploads/${encodeURIComponent(urlString)}`
+    : `https://ecomlancers.com/travel_website/uploads/${encodeURIComponent(urlString)}`;
 }
 
 function processOptionalImageUrl(imageUrl: unknown): string | undefined {
@@ -113,12 +115,36 @@ function clampNumber(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max)
 }
 
+
+
 export default function TourPackagePage({ params }: { params: { id: string } }) {
   const [openDay, setOpenDay] = useState<string | null>("DAY 1")
   const [openPolicy, setOpenPolicy] = useState<string | null>(null)
   const [tourPackage, setTourPackage] = useState<TourPackage | null>(null)
   const [relatedPackages, setRelatedPackages] = useState<TourPackage[]>([])
   const [loading, setLoading] = useState(true)
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+const images: string[] = tourPackage ? [
+  tourPackage.image1,
+  ...(tourPackage.image2 ? [tourPackage.image2] : []),
+  ...(tourPackage.image3 ? [tourPackage.image3] : []),
+  ...(tourPackage.image4 ? [tourPackage.image4] : []),
+  ...(tourPackage.image5 ? [tourPackage.image5] : [])
+].filter(Boolean) : [];
+
+  // Handle image slide show at header
+  useEffect(() => {
+  setCurrentSlide(0); // Reset to first slide when package changes
+  
+  if (images.length > 1) {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }
+}, [tourPackage?.id, images.length]);
 
   useEffect(() => {
     async function loadData() {
@@ -169,33 +195,6 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
 
   const duration = `${tourPackage.days} Days & ${tourPackage.nights} Nights`
 
-  const itinerary = [
-    {
-      day: "DAY 1",
-      title: "ARRIVAL AND WELCOME",
-      content: "Arrive at the destination airport and transfer to your hotel. Spend the rest of the day at leisure."
-    },
-    {
-      day: "DAY 2",
-      title: "EXPLORATION DAY",
-      content: "Full day of sightseeing including the most popular attractions in the area."
-    },
-    {
-      day: "DAY 3",
-      title: "ADVENTURE ACTIVITIES",
-      content: "Experience thrilling activities unique to this destination."
-    },
-    {
-      day: "DAY 4",
-      title: "LEISURE DAY",
-      content: "Free day to relax or explore on your own. Optional activities available."
-    },
-    {
-      day: "DAY 5",
-      title: "DEPARTURE",
-      content: "Transfer to the airport for your return flight with wonderful memories."
-    }
-  ]
 
   return (
     <div className="min-h-screen bg-white relative">
@@ -232,21 +231,98 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
         </div>
       </header>
 
-      <section className="relative h-48 md:h-64">
-        <Image 
-          src={tourPackage.image1} 
-          alt={tourPackage.title} 
-          fill 
-          className="object-cover" 
-          priority 
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-10"></div>
-        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1">
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className={`w-2 h-2 rounded-full ${i === 2 ? "bg-red-600" : "bg-white bg-opacity-60"}`} />
-          ))}
+<section className="relative h-64 md:h-96 w-full">
+  {!tourPackage || images.length === 0 ? (
+    <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
+      <span className="text-gray-500">No images available</span>
+    </div>
+  ) : (
+    <div className="relative h-full w-full overflow-hidden rounded-lg">
+      {/* Slides container */}
+      <div className="relative h-full w-full">
+        {images.map((img, index) => (
+          <div
+            key={`${tourPackage.id}-${index}`}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          >
+            <Image
+              src={img || '/images/default-tour.jpg'}
+              alt={`${tourPackage.title} image ${index + 1}`}
+              fill
+              className="object-cover"
+              priority={index === 0}
+              quality={85}
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                // target.src = '/images/default-tour.jpg';
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Rest of your slider code (gradient overlay, title, navigation controls) */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+
+      {tourPackage && (
+        <div className="absolute bottom-6 left-6 z-20 text-white">
+          <h1 className="text-2xl md:text-3xl font-bold drop-shadow-lg">
+            {tourPackage.title || 'Untitled Tour'}
+          </h1>
+          <p className="text-lg md:text-xl font-medium drop-shadow-md">
+            {duration || 'Duration not specified'}
+          </p>
         </div>
-      </section>
+      )}
+
+      {images.length > 1 && (
+        <>
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
+            {images.map((_, index) => (
+              <button
+                key={`dot-${tourPackage.id}-${index}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(index);
+                }}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentSlide 
+                    ? 'bg-red-600 w-6' 
+                    : 'bg-white/60 hover:bg-white/80'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev - 1 + images.length) % images.length);
+            }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full z-20 transition-colors duration-300"
+            aria-label="Previous image"
+          >
+            <ChevronDown className="rotate-90 w-5 h-5" />
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentSlide((prev) => (prev + 1) % images.length);
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full z-20 transition-colors duration-300"
+            aria-label="Next image"
+          >
+            <ChevronDown className="-rotate-90 w-5 h-5" />
+          </button>
+        </>
+      )}
+    </div>
+  )}
+</section>
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
@@ -267,9 +343,10 @@ export default function TourPackagePage({ params }: { params: { id: string } }) 
                     <span className="ml-2 text-sm text-gray-600">({tourPackage.review} reviews)</span>
                   </div>
 
-                  <p className="text-gray-700 leading-relaxed text-sm mb-4">
-                    {tourPackage.highlights?.join(" ") || "Explore this amazing destination with our expertly crafted tour package."}
-                  </p>
+                    <p className="text-gray-700 leading-relaxed text-sm mb-4 border border-red-500 p-4 rounded-lg">
+                      {tourPackage.highlights?.join(" ") || "Explore this amazing destination with our expertly crafted tour package."}
+                    </p>
+
 
                   <div className="flex flex-col sm:flex-row gap-3 mb-4">
                     <Button className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 text-sm font-semibold">

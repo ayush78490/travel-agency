@@ -84,7 +84,21 @@ export default function GoSamyatiTravel() {
     {
       image: "/images/heritage-hotel.webp",
       categories: [
-        { name: "Heritage", image: "/images/hero-screenshot.png" },
+        { name: "Heritage", image: "/images/portlouis.jpeg" },
+        { name: "Culture", image: "/images/mauritius-beach.jpeg" },
+      ],
+    },
+    {
+      image: "/images/mauritius-beach.jpeg",
+      categories: [
+        { name: "Beach", image: "/images/mauritius-beach.jpeg" },
+        { name: "Cities", image: "/images/portlouis.jpeg" },
+      ],
+    },
+    {
+      image: "/images/heritage-hotel.webp",
+      categories: [
+        { name: "Heritage", image: "/images/portlouis.jpeg" },
         { name: "Culture", image: "/images/mauritius-beach.jpeg" },
       ],
     },
@@ -633,7 +647,7 @@ export default function GoSamyatiTravel() {
               </Card>
 
               {/* Top-left card (left angle of triangle) */}
-              <Card className="absolute bottom-8 right-1/2 sm:right-40 sm:bottom-12 w-40 h-32 sm:w-56 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
+              <Card className="absolute bottom-8 right-1/2 sm:bottom-12 w-40 h-32 sm:w-56 sm:h-40 overflow-hidden rounded-lg shadow-xl hover:scale-105 transition-transform duration-300 cursor-pointer z-10">
                 <Image src="/images/mount-everest.webp" alt="Mountain Adventure" fill className="object-cover" />
                 <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                 <div className="absolute bottom-2 left-2 text-white">
@@ -685,7 +699,7 @@ export default function GoSamyatiTravel() {
           <Image
             src={
               testimonials[currentTestimonial]?.image ||
-              "/placeholder.svg?height=60&width=60"
+              "/images/profile.jpeg?height=60&width=60"
             }
             alt={testimonials[currentTestimonial]?.name || "Customer"}
             width={60}
