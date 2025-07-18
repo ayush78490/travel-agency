@@ -1,4 +1,5 @@
 export type TourPackage = {
+  slug: string;
   id: number;
   title: string;
   days: string;
@@ -16,9 +17,28 @@ export type TourPackage = {
   rating: number;
   review: number;
   groupSize: number;
-  itinerary: {
-    day: string;
-    title: string;
-    content: string;
+  itinerary: ItineraryDay[];
+  duration?: string; // Keeping duration as optional since it was in original
+};
+
+export type ItineraryDay = {
+  day: string;
+  title: string;
+  content: string;
+};
+
+export type Testimonial = {
+  name: string;
+  location: string;
+  text: string;
+  rating?: number;
+  image?: string;
+};
+
+export type HeroSlide = {
+  image: string;
+  categories: {
+    name: string;
+    image: string;
   }[];
 };

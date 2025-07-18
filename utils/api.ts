@@ -1,11 +1,15 @@
+// utils/api.ts
+
 import { TourPackage } from "@/types";
 
 export async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
   try {
     const queryString = new URLSearchParams(params).toString();
     const url = `/api/tours?${queryString}`;
-    
-    const response = await fetch(url);
+
+    const response = await fetch(url, {
+      next: { tags: ['tours'] } // For revalidation
+    });
     
     if (!response.ok) {
       throw new Error(`API request failed with status ${response.status}`);
@@ -26,6 +30,7 @@ export async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
     // Validate and transform each package item
     return packageData.map(item => ({
       id: ensureNumber(item.id, 0),
+      slug: ensureString(item.slug, 'untitled-tour'),
       title: ensureString(item.title, 'Untitled Tour'),
       days: ensureString(item.days, '0'),
       nights: ensureString(item.nights, '0'),

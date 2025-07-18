@@ -7,7 +7,8 @@ import { Loader2, ExternalLink } from "lucide-react"
 
 interface TourRedirectButtonProps {
   tourId: string | number
-  tourTitle?: string
+  tourSlug?: string
+  tourTitle: string
   price?: string
   className?: string
   variant?: "default" | "outline" | "ghost"
@@ -15,8 +16,13 @@ interface TourRedirectButtonProps {
   showIcon?: boolean
 }
 
+function generateSlug(title: string): string {
+  return title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '')
+}
+
 export function TourRedirectButton({
   tourId,
+  tourSlug,
   tourTitle,
   price,
   className = "",
@@ -29,28 +35,21 @@ export function TourRedirectButton({
 
   const handleTourRedirect = async () => {
     setIsLoading(true)
-
     try {
-      // Add analytics tracking if needed
       if (typeof window !== "undefined" && window.gtag) {
         window.gtag("event", "tour_view_click", {
           tour_id: tourId,
           tour_title: tourTitle,
-          price: price,
+          price,
         })
       }
 
-      // Small delay for better UX
-      await new Promise((resolve) => setTimeout(resolve, 300))
-
-      // Redirect to the exact tour details page
-      router.push(`/tour/serene-andaman-relax`)
+      const slug = tourSlug || generateSlug(tourTitle)
+      router.push(`/tour/${tourId}/${slug}`)
     } catch (error) {
       console.error("Tour redirect error:", error)
       setIsLoading(false)
-
-      // Fallback: try window.location
-      window.location.href = `/tour/serene-andaman-relax`
+      window.location.href = `/tour/${tourId}/${tourSlug || generateSlug(tourTitle)}`
     }
   }
 
@@ -60,12 +59,8 @@ export function TourRedirectButton({
       disabled={isLoading}
       variant={variant}
       size={size}
-      className={`
-        relative overflow-hidden transition-all duration-300 transform 
-        hover:scale-105 hover:shadow-lg active:scale-95
-        ${isLoading ? "cursor-not-allowed" : "cursor-pointer"}
-        ${className}
-      `}
+      className={className}
+
     >
       {isLoading ? (
         <div className="flex items-center">
@@ -78,9 +73,6 @@ export function TourRedirectButton({
           {showIcon && <ExternalLink className="w-4 h-4 ml-2" />}
         </div>
       )}
-
-      {/* Ripple effect */}
-      <div className="absolute inset-0 bg-white opacity-0 hover:opacity-10 transition-opacity duration-300 rounded-md" />
     </Button>
   )
 }

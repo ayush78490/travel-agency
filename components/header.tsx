@@ -1,18 +1,23 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button"; // Make sure this path matches your setup
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Menu, X } from "lucide-react"
 
-const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+export function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: {
+  isMobileMenuOpen: boolean,
+  setIsMobileMenuOpen: (value: boolean) => void
+}) {
   return (
     <header className="bg-white shadow-sm relative z-50">
       <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center">
-          <div className="text-2xl font-bold text-red-600">GoSamyati</div>
+          <img 
+            src="/images/logo.png" 
+            alt="GoSamyati Logo"
+            className="h-10 w-auto object-contain ml-2"
+            style={{ transform: "scale(1.5)" }} // Adjusted scale for better visibility
+          />
         </Link>
 
         <nav className="hidden md:flex space-x-8">
@@ -59,7 +64,5 @@ const Header = () => {
         </div>
       )}
     </header>
-  );
-};
-
-export default Header;
+  )
+}

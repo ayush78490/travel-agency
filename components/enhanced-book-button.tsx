@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Loader2, ExternalLink } from "lucide-react"
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void
+  }
+}
+
 interface EnhancedBookButtonProps {
   tourId: string | number
   tourTitle?: string

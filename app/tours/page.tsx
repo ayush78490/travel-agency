@@ -11,6 +11,10 @@ import { TourRedirectButton } from "@/components/tour-redirect-button"
 import { fetchTourPackages } from "@/utils/api" // ← Adjust path as needed
 import { TourPackage } from "@/types"
 import { useSearchParams } from "next/navigation"
+import { slugify } from "@/utils/slugify"
+import { useRouter } from "next/navigation"
+import { Loader2, ExternalLink } from "lucide-react"
+import { Header } from "@/components/header"
 
 type Tour = {
   id: number
@@ -34,6 +38,8 @@ export default function ToursPage() {
   const [tours, setTours] = useState<Tour[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const router = useRouter()
 
   const fallbackTours: Tour[] = [/* your fallbackTours array */]
 
@@ -102,19 +108,10 @@ export default function ToursPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <div className="text-2xl font-bold text-red-600">GoSamyati</div>
-          </Link>
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-red-600 font-medium">Home</Link>
-            <Link href="/tours" className="text-red-600 font-medium">Tours</Link>
-            <Link href="/blogs" className="text-gray-700 hover:text-red-600 font-medium">Blogs</Link>
-            <Link href="/contact" className="text-gray-700 hover:text-red-600 font-medium">Contact Us</Link>
-          </nav>
-        </div>
-      </header>
+      <Header 
+              isMobileMenuOpen={isMobileMenuOpen} 
+              setIsMobileMenuOpen={setIsMobileMenuOpen} 
+            />
 
       <div className="container mx-auto px-6 py-8">
         <div className="text-center mb-12">
@@ -215,11 +212,10 @@ export default function ToursPage() {
                   </div>
                   <TourRedirectButton
                     tourId={tour.id}
+                    tourSlug={slugify(tour.title)}
                     tourTitle={tour.title}
                     price={tour.price}
-                    className="bg-red-600 hover:bg-red-700"
-                    showIcon={true}
-                  />
+                    className="bg-red-600 hover:bg-red-700"                  />
                 </div>
               </CardContent>
             </Card>
