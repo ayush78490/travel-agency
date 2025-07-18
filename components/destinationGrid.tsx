@@ -10,12 +10,12 @@ export function DestinationGrid() {
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-gray-900">PACK & GO GETAWAYS</h2>
         <div className="
-          grid grid-cols-1 md:grid-cols-3 gap-6
-          md:auto-rows-[120px] 
+          grid grid-cols-1 gap-6
+          md:grid-cols-3 md:auto-rows-[120px]
         ">
-          {/* Kenya (tall card, left) */}
+          {/* Kenya */}
           <Link href={`/tours?country=Kenya`} className="md:row-span-2">
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[240px]">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[240px] md:min-h-[240px]">
               <Image
                 src="/images/Kenya.jpeg"
                 alt="Kenya"
@@ -29,9 +29,9 @@ export function DestinationGrid() {
             </Card>
           </Link>
 
-          {/* Switzerland (tall card, center) */}
+          {/* Switzerland */}
           <Link href={`/tours?country=Switzerland`} className="md:row-span-2">
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[670px]">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[400px] md:min-h-[670px]">
               <Image
                 src="/images/switzerLand.jpeg"
                 alt="Switzerland"
@@ -45,9 +45,9 @@ export function DestinationGrid() {
             </Card>
           </Link>
 
-          {/* London (short, stacked with Hong Kong) */}
+          {/* London */}
           <Link href={`/tours?country=London`}>
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[350px]">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[250px] md:min-h-[350px]">
               <Image
                 src="/images/london.jpeg"
                 alt="London"
@@ -61,9 +61,9 @@ export function DestinationGrid() {
             </Card>
           </Link>
 
-          {/* Australia (wide, third row left) */}
+          {/* Australia */}
           <Link href={`/tours?country=Australia`} className="md:col-span-2">
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[380px] w-1/4">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[250px] md:min-h-[380px] w-full left-0 md:left-1/4 md:w-1/4">
               <Image
                 src="/images/Australia.jpeg"
                 alt="Australia"
@@ -77,9 +77,9 @@ export function DestinationGrid() {
             </Card>
           </Link>
 
-          {/* Hong Kong (short, stacked with London, bottom right) */}
+          {/* Hong Kong */}
           <Link href={`/tours?country=Hong Kong`}>
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[300px] mt-20">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[200px] md:min-h-[300px] mt-0 md:mt-20">
               <Image
                 src="/images/hongKong.jpeg"
                 alt="Hong Kong"
@@ -93,9 +93,9 @@ export function DestinationGrid() {
             </Card>
           </Link>
 
-          {/* Mauritius (wide, third row center/right) */}
-          <Link href={`/tours?country=Mauritius`} className="md:col-span-2">
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[380px] w-1/4 -mt-36 left-1/4">
+          {/* Mauritius */}
+          <Link href={`/tours?country=Mauritius`} className="md:col-span-2 mt-0 md:-mt-36 md:left-1/4">
+            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[250px] md:min-h-[380px] w-full md:w-1/4">
               <Image
                 src="/images/mauritius-beach.jpeg"
                 alt="Mauritius"
