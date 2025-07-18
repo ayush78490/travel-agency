@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { X, MapPin, Users, Calendar, MessageSquare, Star, Heart, Globe, Award, Link } from 'lucide-react';
 
-import Header from '@/components/header';
-import Footer from '@/components/footer';
+import {Header} from '@/components/header';
+import {Footer} from '@/components/footer';
 
 import { LinkButton } from '@/components/ui/linkButton';
 
 export default function TravelWebsite() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const openPopup = () => setIsPopupOpen(true);
   const closePopup = () => setIsPopupOpen(false);
@@ -16,7 +17,10 @@ export default function TravelWebsite() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <Header />
+      <Header 
+        isMobileMenuOpen={isMobileMenuOpen} 
+        setIsMobileMenuOpen={setIsMobileMenuOpen} 
+      />
 
       {/* Hero Section */}
 
