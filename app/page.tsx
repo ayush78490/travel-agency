@@ -7,7 +7,7 @@ import { DestinationGrid } from "@/components/destinationGrid"
 import { TourPackagesSection } from "@/components/tour-package"
 import { TestimonialsSection } from "@/components/testimonial"
 import { Footer } from "@/components/footer"
-import { fetchTourPackages } from "@/utils/api"
+import { fetchTourPackages, fetchTestimonials } from "@/utils/api"
 import { TourPackage, Testimonial, HeroSlide } from "@/types/index"
 
 const fallbackTestimonials = [

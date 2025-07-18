@@ -1,6 +1,6 @@
 // utils/api.ts
 
-import { TourPackage } from "@/types";
+import { TourPackage, Testimonial } from "@/types";
 
 export async function fetchTourPackages(params = {}): Promise<TourPackage[]> {
   try {
@@ -127,4 +127,18 @@ function clampNumber(
   max: number
 ): number {
   return Math.min(Math.max(value, min), max);
+}
+
+export async function fetchTestimonials(params = {}): Promise<Testimonial[]> {
+  const query = new URLSearchParams(params as Record<string, string>).toString();
+  const url = `https://ecomlancers.com/travel_website/Api/testimonials${query ? `?${query}` : ""}`;
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Failed to fetch testimonials");
+    const data = await response.json();
+    return Array.isArray(data) ? data : data?.data || [];
+  } catch (error) {
+    console.error("Error fetching testimonials:", error);
+    return [];
+  }
 }
