@@ -19,6 +19,7 @@ import { Footer } from "@/components/footer"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
 import { fetchTourPackages } from "@/utils/api"
 import { TourPackage } from "@/types/index"
+import { TourPackagesSection } from "@/components/tour-package";
 
 export default function TourPageClient() {
   const searchParams = useSearchParams()
@@ -28,6 +29,8 @@ export default function TourPageClient() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const tourId = searchParams.get("id")
+  const [packages, setPackages] = useState<TourPackage[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (!tourId) {
@@ -73,6 +76,35 @@ export default function TourPageClient() {
 
     loadTour()
   }, [tourId])
+
+    useEffect(() => {
+    const loadPackages = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        const data = await fetchTourPackages({
+          limit: 8,
+          category: 'International'
+        });
+        
+        const packageData = Array.isArray(data) ? data : [];
+        setPackages(packageData);
+        
+        if (packageData.length === 0) {
+          setError('No tour packages found');
+        }
+      } catch (err) {
+        console.error('Failed to fetch packages:', err);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setPackages([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPackages();
+  }, []);
 
   const duration = tourPackage 
     ? `${tourPackage.days} Days & ${tourPackage.nights} Nights`
@@ -159,7 +191,13 @@ export default function TourPageClient() {
               </ul>
             </div>
 
-            <RelatedPackages packages={relatedPackages} />
+            <TourPackagesSection 
+                    title="Related" 
+                    packages={packages.slice(4, 8)}
+                    isLoading={isLoading}
+                    error={error}
+                    fallbackPackages={[]}
+                  />
             <PolicyAccordion />
           </div>
 
