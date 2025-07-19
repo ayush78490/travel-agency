@@ -6,6 +6,7 @@ export type TourPackage = {
   days: string;
   nights: string;
   price: string;
+  basic_info: string;
   image1: string;
   image2?: string;
   image3?: string;
@@ -19,7 +20,8 @@ export type TourPackage = {
   review: number;
   groupSize: number;
   itinerary: ItineraryDay[];
-  duration?: string; // Keeping duration as optional since it was in original
+  duration?: string;
+   // Keeping basic_info as optional since it was in original
 };
 
 export type ItineraryDay = {

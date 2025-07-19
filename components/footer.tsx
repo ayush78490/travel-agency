@@ -13,8 +13,8 @@ import {
 export function Footer() {
   return (
     <>
-      <footer className="bg-[#F7F7F7] text-black py-10 rounded-t-2xl">
-        <div className="container mx-auto px-4 sm:px-6">
+      <footer className="bg-[#F7F7F7] text-black py-10 rounded-t-2xl px-4 sm:px-8 md:px-20 lg:px-40">
+        <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* ABOUT GOSAMYATI */}
             <div>
@@ -55,26 +55,29 @@ export function Footer() {
 
             {/* TRAVEL DESTINATION IMAGES */}
             <div>
-              <h3 className="text-lg font-bold mb-4 ml-10">TRAVEL DESTINATION</h3>
+              <h3 className="text-lg font-bold mb-4 md:ml-10">TRAVEL DESTINATION</h3>
               <div className="grid grid-cols-2 gap-2">
-                <div className="relative h-24 aspect-square w-1/2 left-10">
-                  <Image src="/images/Australia.jpeg" alt="Australia" fill className="rounded-xl object-cover" />
-                </div>
-                <div className="relative h-24 aspect-square w-1/2 right-10">
-                  <Image src="/images/dubai.jpeg" alt="Dubai" fill className="rounded-xl object-cover" />
-                </div>
-                <div className="relative h-24 aspect-square w-1/2 left-10">
-                  <Image src="/images/mauritius-beach.jpeg" alt="Mauritius" fill className="rounded-xl object-cover" />
-                </div>
-                <div className="relative h-24 aspect-square w-1/2 right-10">
-                  <Image src="/images/hongKong.jpeg" alt="Hong Kong" fill className="rounded-xl object-cover" />
-                </div>
+                {[
+                  { src: "/images/Australia.jpeg", alt: "Australia" },
+                  { src: "/images/dubai.jpeg", alt: "Dubai" },
+                  { src: "/images/mauritius-beach.jpeg", alt: "Mauritius" },
+                  { src: "/images/hongKong.jpeg", alt: "Hong Kong" },
+                ].map((img, idx) => (
+                  <div key={idx} className="relative h-24 aspect-square w-full">
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      fill
+                      className="rounded-xl object-cover"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           {/* CONTACT INFO */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
             <div>
               <h4 className="font-semibold mb-1">Call Us</h4>
               <p>+91 9940882200</p>

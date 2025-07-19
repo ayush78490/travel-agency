@@ -8,7 +8,7 @@ export function BookingSidebar({ price }: { price: string }) {
   return (
     <div className="sticky top-4 space-y-4">
       <div className="bg-white border rounded-lg p-4 shadow-sm">
-        <h3 className="text-sm font-bold text-red-600 mb-4 text-center">Quick Booking</h3>
+        <h3 className="text-sm font-bold text-red-600 mb-4 text-center">Starts from</h3>
         <div className="space-y-4">
           <div className="text-center">
             <div className="text-xl font-bold text-red-600">{price}</div>
@@ -22,7 +22,7 @@ export function BookingSidebar({ price }: { price: string }) {
           <Link href="/contact">
             <Button
               variant="outline"
-              className="w-full border-red-600 text-red-600 hover:bg-red-50 bg-transparent text-sm"
+              className="w-full border-red-600 text-red-600 hover:bg-red-50 bg-transparent text-sm mt-2 py-3 font-semibold"
             >
               Send Enquiry
             </Button>

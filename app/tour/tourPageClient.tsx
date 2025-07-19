@@ -7,7 +7,7 @@ import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Header } from "@/components/tour-details/header"
+import { Header } from "@/components/header"
 import { ImageSlider } from "@/components/tour-details/image-slider"
 import { TourHighlights } from "@/components/tour-details/tour-highlights"
 import { Itinerary } from "@/components/tour-details/itineary"
@@ -31,6 +31,7 @@ export default function TourPageClient() {
   const tourId = searchParams.get("id")
   const [packages, setPackages] = useState<TourPackage[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!tourId) {
@@ -137,7 +138,10 @@ export default function TourPageClient() {
 
   return (
     <div className="min-h-screen bg-white relative">
-      <Header />
+      <Header 
+        isMobileMenuOpen={isMobileMenuOpen} 
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
       {/* Updated ImageSlider usage - now only needs tourId */}
       <ImageSlider tourId={tourId || ""} />
@@ -148,7 +152,7 @@ export default function TourPageClient() {
 
             <TourHighlights tourId={tourId || ""} />
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            {/* <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <TourRedirectButton
                 tourId={tourPackage.id}
                 tourTitle={tourPackage.title}
@@ -164,7 +168,7 @@ export default function TourPageClient() {
                   SEND AN ENQUIRY
                 </Button>
               </Link>
-            </div>
+            </div> */}
 
             <Itinerary tourId={tourId || ""} />
             <InclusionExclusion />

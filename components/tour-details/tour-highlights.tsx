@@ -55,6 +55,8 @@ export function TourHighlights({ tourId }: TourHighlightsProps) {
   }
 
   const duration = `${tour.days} Days & ${tour.nights} Nights`
+  console.log("Tour basic_info:", tour.basic_info)
+  console.log("Tour title:", tour.title)
 
   return (
     <div className="mb-6">
@@ -76,7 +78,7 @@ export function TourHighlights({ tourId }: TourHighlightsProps) {
           </div>
 
           <p className="text-gray-700 leading-relaxed text-sm mb-4 border border-red-500 p-4 rounded-lg">
-            {tour.highlights?.join(" ") || "Explore this amazing destination with our expertly crafted tour package."}
+            {tour.basic_info || "Explore this amazing destination with our expertly crafted tour package."}
           </p>
         </div>
 
