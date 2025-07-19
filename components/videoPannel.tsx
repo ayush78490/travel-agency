@@ -24,8 +24,8 @@ export function FloatingVideoGrid() {
     ? [
         // Row 1
         { src: "/videos/video1.mp4", bottom: "4vw", right: "4vw" },
-        { src: "/videos/video2.mp4", bottom: "4vw", right: "48vw" },
-        { src: "/videos/video1.mp4", bottom: "4vw", right: "92vw" },
+        { src: "/videos/video0.mp4", bottom: "4vw", right: "48vw" },
+        { src: "/videos/video0.mp4", bottom: "4vw", right: "92vw" },
 
         // Row 2
         { src: "/videos/video4.mp4", bottom: "30vw", right: "4vw" },
@@ -37,8 +37,8 @@ export function FloatingVideoGrid() {
     : [
         // Row 1
         { src: "/videos/video1.mp4", bottom: "20px", right: "20px" },
-        { src: "/videos/video1.mp4", bottom: "20px", right: "260px" },
-        { src: "/videos/video1.mp4", bottom: "20px", right: "500px" },
+        { src: "/videos/video0.mp4", bottom: "20px", right: "260px" },
+        { src: "/videos/video0.mp4", bottom: "20px", right: "500px" },
 
         // Row 2
         { src: "/videos/video4.mp4", bottom: "160px", right: "20px" },
