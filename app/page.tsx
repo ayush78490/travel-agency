@@ -9,6 +9,10 @@ import { TestimonialsSection } from "@/components/testimonial"
 import { Footer } from "@/components/footer"
 import { fetchTourPackages, fetchTestimonials } from "@/utils/api"
 import { TourPackage, Testimonial, HeroSlide } from "@/types/index"
+import { TourRedirectButton } from "@/components/tour-redirect-button"
+import HolidayBanner from '@/components/holidaySpecial';
+import { FloatingVideoGrid } from "@/components/videoPannel"
+
 
 const fallbackTestimonials = [
   {
@@ -65,7 +69,8 @@ const fallbackPackages: TourPackage[] = [
       }
     ],
     duration: "5 Nights & 6 Days",
-    slug: ""
+    slug: "",
+    description: ""
   },
   {
     id: 2,
@@ -97,7 +102,8 @@ const fallbackPackages: TourPackage[] = [
       }
     ],
     duration: "7 Nights & 8 Days",
-    slug: ""
+    slug: "",
+    description: ""
   },
   {
     id: 3,
@@ -129,7 +135,8 @@ const fallbackPackages: TourPackage[] = [
       }
     ],
     duration: "4 Nights & 5 Days",
-    slug: ""
+    slug: "",
+    description: ""
   },
   {
     id: 4,
@@ -161,7 +168,8 @@ const fallbackPackages: TourPackage[] = [
       }
     ],
     duration: "6 Nights & 7 Days",
-    slug: ""
+    slug: "",
+    description: ""
   }
 ];
 
@@ -296,7 +304,9 @@ export default function GoSamyatiTravel() {
         error={error}
         fallbackPackages={fallbackPackages}
       />
-      
+      <HolidayBanner />
+      <FloatingVideoGrid />
+
       <TestimonialsSection 
         testimonials={testimonials}
         currentTestimonial={currentTestimonial}

@@ -2,6 +2,17 @@
 
 import { Badge } from "@/components/ui/badge"
 import { Star } from "lucide-react"
+import { fetchTourPackages } from "@/utils/api"
+import type { TourPackage } from "@/types/index"
+
+interface TourHighlightsProps {
+  title: string | null,
+  duration: string | null,
+  price: string | null,
+  rating: number | null,
+  review: number | null,
+  highlights: string[] | null
+}
 
 export function TourHighlights({ 
   title, 
@@ -10,7 +21,7 @@ export function TourHighlights({
   rating, 
   review, 
   highlights 
-}: {
+}: {  
   title: string,
   duration: string,
   price: string,
@@ -18,6 +29,9 @@ export function TourHighlights({
   review: number,
   highlights: string[]
 }) {
+
+
+
   return (
     <div className="mb-6">
       <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">

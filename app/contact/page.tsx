@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube, Send, Check } from "lucide-react"
+import { Header } from "@/components/header" // <-- Import Header
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false) // <-- Add mobile menu state
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -103,28 +105,11 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header - unchanged */}
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <div className="text-2xl font-bold text-red-600">GoSamyati</div>
-          </Link>
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-red-600 font-medium">
-              Home
-            </Link>
-            <Link href="/tours" className="text-gray-700 hover:text-red-600 font-medium">
-              Tours
-            </Link>
-            <Link href="/blogs" className="text-gray-700 hover:text-red-600 font-medium">
-              Blogs
-            </Link>
-            <Link href="/contact" className="text-red-600 font-medium">
-              Contact Us
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Use Header component */}
+      <Header 
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
+      />
 
       <div className="container mx-auto px-6 py-8">
         {/* Page Header - modified for trip planning */}

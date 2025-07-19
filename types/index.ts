@@ -1,4 +1,5 @@
 export type TourPackage = {
+  description: string;
   slug: string;
   id: number;
   title: string;

@@ -8,6 +8,15 @@ import { ChevronRight } from "lucide-react"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
 import { TourPackage } from "@/types/index"
 import { slugify } from "@/utils/slugify"
+import { useState } from "react"
+
+interface TourPackagesSectionProps {
+  title: string
+  packages: TourPackage[]
+  isLoading: boolean
+  error: string | null
+  fallbackPackages: TourPackage[]
+}
 
 export function TourPackagesSection({ 
   title, 
@@ -15,92 +24,86 @@ export function TourPackagesSection({
   isLoading,
   error,
   fallbackPackages
-}: {
-  title: string,
-  packages: TourPackage[],
-  isLoading: boolean,
-  error: string | null,
-  fallbackPackages: TourPackage[]
-}) {
-  const renderPackageCards = () => {
-    const packagesToShow = isLoading ? [] : (error || !packages?.length) ? fallbackPackages : packages;
+}: TourPackagesSectionProps) {
+  const [selectedTourId, setSelectedTourId] = useState<string | number | null>(null)
 
-    if (error || !packages?.length) {
-      return fallbackPackages.map((pkg) => (
-        <Card key={`fallback-${pkg.id}`} className="overflow-hidden hover:shadow-lg transition-shadow">
+  const renderPackageCards = () => {
+    if (isLoading) {
+      return Array(4).fill(0).map((_, index) => (
+        <Card key={`loading-${index}`} className="overflow-hidden animate-pulse">
+          <div className="relative h-48 bg-gray-200" />
+          <CardContent className="p-4">
+            <div className="h-4 w-20 bg-gray-200 rounded mb-2" />
+            <div className="h-5 w-full bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-24 bg-gray-200 rounded mb-3" />
+            <div className="h-10 w-full bg-gray-200 rounded" />
+          </CardContent>
+        </Card>
+      ))
+    }
+
+    const packagesToShow = (error || !packages?.length) ? fallbackPackages : packages
+    
+    return packagesToShow.map((pkg) => {
+      if (!pkg.id || !pkg.title) {
+        console.warn(`Skipping tour package with missing ID or title`, pkg)
+        return null
+      }
+      return (
+        <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
           <div className="relative h-48">
             <Image 
               src={pkg.image1 || "/images/default-tour.jpg"} 
-              alt={pkg.title}
+              alt={pkg.title || "Tour package"}
               fill
-              className="object-cover"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              priority={false}
             />
           </div>
-          <CardContent className="p-4">
-            {pkg.duration && (
-              <Badge variant="outline" className="mb-2 text-xs">
-                {pkg.duration}
-              </Badge>
-            )}
-            <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">
-              {pkg.title}
-            </h3>
-            <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
+          <CardContent className="p-4 flex flex-col h-[calc(100%-12rem)]">
+            <div className="flex-grow">
+              {pkg.duration && (
+                <Badge variant="outline" className="mb-2 text-xs">
+                  {pkg.duration}
+                </Badge>
+              )}
+              <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base line-clamp-2">
+                {pkg.title}
+              </h3>
+              <p className="text-sm text-gray-600 mb-3">
+                {pkg.price || "Price not available"}
+              </p>
+            </div>
             <TourRedirectButton
-            tourId={pkg.id}
-            tourTitle={pkg.title}
-            price={pkg.price}
-            className="w-full bg-red-600 hover:bg-red-700"
-            showIcon={true}
-          />
+              tourId={pkg.id}
+              tourTitle={pkg.title}
+              variant="default"
+              size="sm"
+              className="mt-auto bg-red-600 hover:bg-red-700 text-white"
+              showIcon={true}
+              onTourSelect={setSelectedTourId}
+            />
           </CardContent>
         </Card>
-      ));
-    }
-
-    return packagesToShow.map((pkg) => (
-      <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-        <div className="relative h-48">
-          <Image 
-            src={pkg.image1 || "/images/default-tour.jpg"} 
-            alt={pkg.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-          />
-        </div>
-        <CardContent className="p-4">
-          {pkg.duration && (
-            <Badge variant="outline" className="mb-2 text-xs">
-              {pkg.duration}
-            </Badge>
-          )}
-          <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base">
-            {pkg.title}
-          </h3>
-          <p className="text-sm text-gray-600 mb-3">{pkg.price}</p>
-          <TourRedirectButton
-            tourId={pkg.id}
-            tourSlug={slugify(pkg.title)} // Convert title to slug here
-            tourTitle={pkg.title}
-            price={pkg.price}
-            className="w-full bg-red-600 hover:bg-red-700"
-            showIcon={true}
-          />
-        </CardContent>
-      </Card>
-    ));
-  };
+      )
+    }).filter(Boolean)
+  }
 
   return (
-    <section className="py-12 sm:py-16">
+    <section className="py-12 sm:py-16 bg-gray-50">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold">{title}</h2>
-          <Link href="/tours" className="text-red-600 hover:underline flex items-center text-sm sm:text-base">
-            View all <ChevronRight className="w-4 h-4 ml-1" />
-          </Link>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{title}</h2>
+          {!isLoading && (
+            <Link 
+              href="/tours" 
+              className="text-red-600 hover:underline flex items-center text-sm sm:text-base transition-colors"
+              prefetch={false}
+            >
+              View all <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {renderPackageCards()}
