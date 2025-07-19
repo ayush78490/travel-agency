@@ -55,18 +55,18 @@ export function Footer() {
 
             {/* TRAVEL DESTINATION IMAGES */}
             <div>
-              <h3 className="text-lg font-bold mb-4">TRAVEL DESTINATION</h3>
+              <h3 className="text-lg font-bold mb-4 ml-10">TRAVEL DESTINATION</h3>
               <div className="grid grid-cols-2 gap-2">
-                <div className="relative h-24 aspect-square w-1/2">
+                <div className="relative h-24 aspect-square w-1/2 left-10">
                   <Image src="/images/Australia.jpeg" alt="Australia" fill className="rounded-xl object-cover" />
                 </div>
-                <div className="relative h-24 aspect-square w-1/2">
+                <div className="relative h-24 aspect-square w-1/2 right-10">
                   <Image src="/images/dubai.jpeg" alt="Dubai" fill className="rounded-xl object-cover" />
                 </div>
-                <div className="relative h-24 aspect-square w-1/2">
+                <div className="relative h-24 aspect-square w-1/2 left-10">
                   <Image src="/images/mauritius-beach.jpeg" alt="Mauritius" fill className="rounded-xl object-cover" />
                 </div>
-                <div className="relative h-24 aspect-square w-1/2">
+                <div className="relative h-24 aspect-square w-1/2 right-10">
                   <Image src="/images/hongKong.jpeg" alt="Hong Kong" fill className="rounded-xl object-cover" />
                 </div>
               </div>
