@@ -1,12 +1,53 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { ChevronDown, ChevronUp } from "lucide-react"
-import { useState } from "react"
-import { ItineraryDay } from "@/types/index"
+import { fetchTourPackages } from "@/utils/api"
+import { ItineraryDay, TourPackage } from "@/types/index"
 
-export function Itinerary({ itinerary }: { itinerary: ItineraryDay[] }) {
+interface ItineraryProps {
+  tourId: string | number
+}
+
+export function Itinerary({ tourId }: ItineraryProps) {
+  const [matchedTour, setMatchedTour] = useState<TourPackage | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   const [openDay, setOpenDay] = useState<string | null>("DAY 1")
+
+  useEffect(() => {
+    const loadItinerary = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const packages = await fetchTourPackages()
+
+        const matched = packages.find(pkg => String(pkg.id) === String(tourId))
+        console.log("Matched tour package:", matched)
+
+        if (!matched) {
+          setError("Tour not found")
+          return
+        }
+
+        setMatchedTour(matched)
+      } catch (err) {
+        console.error("Failed to fetch itinerary:", err)
+        setError("Error loading itinerary")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadItinerary()
+  }, [tourId])
+
+  if (loading) return <div className="text-gray-500 text-sm">Loading itinerary...</div>
+  if (error) return <div className="text-red-500 text-sm">{error}</div>
+
+  const itinerary = matchedTour?.itinerary ?? []
 
   return (
     <div className="mb-6">
@@ -23,7 +64,11 @@ export function Itinerary({ itinerary }: { itinerary: ItineraryDay[] }) {
                 <span>
                   {day.day} : {day.title}
                 </span>
-                {openDay === day.day ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                {openDay === day.day ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
               </CollapsibleTrigger>
               <CollapsibleContent className="p-3 bg-gray-50 border border-t-0 text-sm">
                 <p className="text-gray-700 leading-relaxed">{day.content}</p>

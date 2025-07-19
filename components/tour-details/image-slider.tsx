@@ -23,7 +23,6 @@ export function ImageSlider({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  console.log("ImageSlider initialized with tourId:", tourId)
 
   const fetchTourData = useCallback(async () => {
     try {
@@ -35,7 +34,6 @@ export function ImageSlider({
       
       // Fetch tour data using the ID
       const packages = await fetchTourPackages(idString)
-      console.log("Fetching data for id:", idString)
       
       if (!packages || packages.length === 0) {
         throw new Error("Tour package not found")
@@ -51,7 +49,6 @@ export function ImageSlider({
         throw new Error(`Tour package with ID ${idString} not found in response`)
       }
       
-      console.log("Fetched tour package with id:", packageData.id)
       
       // Process the data with fallbacks
       const processedData = {

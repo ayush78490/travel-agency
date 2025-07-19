@@ -38,7 +38,6 @@ export default function TourPageClient() {
       setError("Tour ID not specified")
       return
     }
-    console.log("Fetching tour data for ID:", tourId)
     async function loadTour() {
       try {
     setLoading(true)
@@ -49,7 +48,6 @@ export default function TourPageClient() {
       return
     }
         const packages = await fetchTourPackages(tourId)
-        console.log("Fetched packages:", packages)
         if (!packages || packages.length === 0) {
           setError("Tour not found")
           return
@@ -147,14 +145,8 @@ export default function TourPageClient() {
       <div className="container mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <div className="lg:col-span-3">
-            <TourHighlights
-              title={tourPackage.title}
-              duration={duration}
-              price={tourPackage.price}
-              rating={tourPackage.rating}
-              review={tourPackage.review}
-              highlights={tourPackage.highlights}
-            />
+
+            <TourHighlights tourId={tourId || ""} />
 
             <div className="flex flex-col sm:flex-row gap-3 mb-4">
               <TourRedirectButton
@@ -174,7 +166,7 @@ export default function TourPageClient() {
               </Link>
             </div>
 
-            <Itinerary itinerary={tourPackage.itinerary} />
+            <Itinerary tourId={tourId || ""} />
             <InclusionExclusion />
 
             <div className="mb-6">
