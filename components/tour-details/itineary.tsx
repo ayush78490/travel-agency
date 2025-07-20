@@ -23,13 +23,23 @@ export function Itinerary({ tourId }: ItineraryProps) {
         setError(null)
 
         const packages = await fetchTourPackages()
-        const matched = packages.find(pkg => String(pkg.id) === String(tourId))
 
-        if (!matched) {
+        const matchedRaw = packages.find(pkg => String(pkg.id) === String(tourId))
+
+        if (!matchedRaw) {
           setError("Tour not found")
           return
         }
 
+        // ✅ Remap and clean highlights
+        const matched: TourPackage = {
+          ...matchedRaw,
+          itinerary: matchedRaw.itinerary || [], // 🔁 Map 'itinerary' to 'itinerary'
+          highlights: Array.isArray(matchedRaw.highlights)
+            ? matchedRaw.highlights.filter((hl) => hl && hl.trim() !== "")
+            : [],
+        }
+        console.log("Matched tour itinerary:", matched.itinerary) // Debug log
         setMatchedTour(matched)
       } catch (err) {
         console.error("Failed to fetch data:", err)
@@ -77,7 +87,7 @@ export function Itinerary({ tourId }: ItineraryProps) {
               >
                 <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
                   <span>
-                    {day.day} : {day.title}
+                    {day.day} : {day.location}
                   </span>
                   {openDay === day.day ? (
                     <ChevronUp className="w-4 h-4" />
@@ -86,7 +96,9 @@ export function Itinerary({ tourId }: ItineraryProps) {
                   )}
                 </CollapsibleTrigger>
                 <CollapsibleContent className="p-3 bg-gray-50 border border-t-0 text-sm">
-                  <p className="text-gray-700 leading-relaxed">{day.content}</p>
+                  <p className="text-gray-700 leading-relaxed">
+                    {day.itinerary_details || "No details available."}
+                  </p>
                 </CollapsibleContent>
               </Collapsible>
             ))

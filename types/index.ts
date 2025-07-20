@@ -25,12 +25,15 @@ export type TourPackage = {
 };
 
 export type ItineraryDay = {
+  location: string;
   day: string;
-  title: string;
-  content: string;
+  itinerary_details: string;
 };
 
 export type Testimonial = {
+  id: number;
+  title: string;
+  testimonial: string;
   name: string;
   location: string;
   text: string;

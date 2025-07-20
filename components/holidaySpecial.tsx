@@ -62,7 +62,7 @@ const HolidayBanner: React.FC<HolidayBannerProps> = ({
 
             <div className="border-t mx-auto my-6">
             <Link href="/contact" className="bg-red-500 text-white px-12 py-3 uppercase tracking-wider">
-              Inquire Now
+              Enquire Now
             </Link >
             </div>
             

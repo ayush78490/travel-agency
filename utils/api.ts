@@ -9,43 +9,48 @@ export async function fetchTourPackages(params: string | Record<string, any> = {
     ? `tour-${params}`
     : `tour-${JSON.stringify(params)}`;
 
-  // Return cached promise if available
-  if (responseCache.has(cacheKey)) {
-    return responseCache.get(cacheKey);
-  }
-
   try {
     const queryString = typeof params === 'string' 
       ? `id=${params}`
       : new URLSearchParams(params).toString();
     
     const url = `/api/tours?${queryString}`;
+    console.log('Fetching from URL:', url); // Debug log
 
-    // Store the promise in cache immediately
     const fetchPromise = fetch(url, {
       next: { 
         tags: ['tours'],
-        revalidate: 3600 // Revalidate every hour
+        revalidate: 3600
       },
-      cache: 'force-cache' // Enable HTTP caching
+      cache: 'force-cache'
     })
       .then(async (response) => {
         if (!response.ok) {
           throw new Error(`API request failed with status ${response.status}`);
         }
-        return response.json();
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
       })
       .then(responseData => {
-        const packageData = Array.isArray(responseData) 
-          ? responseData 
-          : responseData?.data || [];
+        console.log('Parsed response:', responseData); // Debug log
         
-        if (!Array.isArray(packageData)) {
-          console.warn('Unexpected API response format:', responseData);
-          return [];
+        // Handle array response
+        if (Array.isArray(responseData)) {
+          return responseData.map(processTourPackage);
         }
-
-        return packageData.map(processTourPackage);
+        // Handle object with data array
+        if (responseData?.data) {
+          return Array.isArray(responseData.data) 
+            ? responseData.data.map(processTourPackage)
+            : [];
+        }
+        // Handle single object response
+        if (responseData && typeof responseData === 'object') {
+          return [processTourPackage(responseData)];
+        }
+        // Fallback for unexpected formats
+        console.warn('Unexpected API response format:', responseData);
+        return [];
       })
       .catch(error => {
         console.error('Error fetching tour packages:', error);

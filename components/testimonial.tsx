@@ -61,7 +61,7 @@ export function TestimonialsSection({
             </div>
 
             {/* Testimonial headline */}
-            <p className="text-sm text-red-600 font-semibold mb-1">Excellent Service!</p>
+            <p className="text-sm text-red-600 font-semibold mb-1">{testimonials[currentTestimonial].title}</p>
 
             {/* Testimonial text */}
             <p className="text-gray-700 text-lg leading-relaxed mb-4 px-4">
