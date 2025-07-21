@@ -88,10 +88,10 @@ function processTourPackage(item: any): TourPackage {
     rating: clampNumber(ensureNumber(item.rating, 4.0), 0, 5),
     review: ensureNumber(item.review, 0),
     groupSize: ensureNumber(item.groupSize, 1),
-    itinerary: item.itinerary ? item.itinerary.map((day: any) => ({
+    itinerary: item.iternary ? item.iternary.map((day: any) => ({
       day: ensureString(day.day, 'DAY 1'),
-      title: ensureString(day.title, 'Untitled Day'),
-      content: ensureString(day.content, 'No details available')
+      title: ensureString(day.location, 'Untitled Day'),
+      content: ensureString(day.iternary_details, 'No details available')
     })) : []
   };
 }
