@@ -91,8 +91,8 @@ export function TourPackagesSection({
   }
 
   return (
-    <section className="py-12 sm:py-16 bg-gray-50">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section className="py-12 sm:py-16 bg-gray-50 w-[80vw] mx-auto">
+      <div className="px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{title}</h2>
           {!isLoading && (

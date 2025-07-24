@@ -17,40 +17,44 @@ export function Itinerary({ tourId }: ItineraryProps) {
   const [openDay, setOpenDay] = useState<string | null>("DAY 1")
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true)
-        setError(null)
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const packages = await fetchTourPackages()
+      // Add debug log for the fetch
+      console.log("Fetching tour packages...");
+      const packages = await fetchTourPackages();
+      console.log("All packages received:", packages);
 
-        const matchedRaw = packages.find(pkg => String(pkg.id) === String(tourId))
+      const matchedRaw = packages.find(pkg => String(pkg.id) === String(tourId));
+      console.log("Matched raw package:", matchedRaw);
 
-        if (!matchedRaw) {
-          setError("Tour not found")
-          return
-        }
-
-        // ✅ Remap and clean highlights
-        const matched: TourPackage = {
-          ...matchedRaw,
-          itinerary: matchedRaw.itinerary || [], // 🔁 Map 'itinerary' to 'itinerary'
-          highlights: Array.isArray(matchedRaw.highlights)
-            ? matchedRaw.highlights.filter((hl) => hl && hl.trim() !== "")
-            : [],
-        }
-        console.log("Matched tour itinerary:", matched.itinerary) // Debug log
-        setMatchedTour(matched)
-      } catch (err) {
-        console.error("Failed to fetch data:", err)
-        setError("Error loading itinerary")
-      } finally {
-        setLoading(false)
+      if (!matchedRaw) {
+        setError("Tour not found");
+        return;
       }
-    }
 
-    loadData()
-  }, [tourId])
+      const matched: TourPackage = {
+        ...matchedRaw,
+        itinerary: matchedRaw.itinerary || [],
+        highlights: Array.isArray(matchedRaw.highlights)
+          ? matchedRaw.highlights.filter((hl) => hl && hl.trim() !== "")
+          : [],
+      };
+      
+      console.log("Processed matched tour:", matched);
+      setMatchedTour(matched);
+    } catch (err) {
+      console.error("Failed to fetch data:", err);
+      setError("Error loading itinerary");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  loadData();
+}, [tourId]);
 
   if (loading) return <div className="text-gray-500 text-sm">Loading itinerary...</div>
   if (error) return <div className="text-red-500 text-sm">{error}</div>
@@ -58,6 +62,7 @@ export function Itinerary({ tourId }: ItineraryProps) {
   const itinerary = matchedTour?.itinerary ?? []
   const highlights = matchedTour?.highlights ?? []
 
+   console.log("Itinerary data:", itinerary) // Debug log
   return (
     <>
       {/* Highlights Section */}

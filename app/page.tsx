@@ -12,6 +12,7 @@ import { TourPackage, Testimonial, HeroSlide } from "@/types/index"
 import { TourRedirectButton } from "@/components/tour-redirect-button"
 import HolidayBanner from '@/components/holidaySpecial';
 import { FloatingVideoGrid } from "@/components/videoPannel"
+import { WhyUsSection } from "@/components/whyUsSection"
 
 
 const fallbackTestimonials = [
@@ -312,6 +313,8 @@ export default function GoSamyatiTravel() {
         currentTestimonial={currentTestimonial}
         setCurrentTestimonial={setCurrentTestimonial}
       />
+
+      <WhyUsSection />
       
       <Footer />
     </div>

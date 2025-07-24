@@ -6,11 +6,11 @@ import { Card } from "@/components/ui/card"
 
 export function DestinationGrid() {
   return (
-    <section className="py-12 sm:py-16 bg-white">
+    <section className="py-12 sm:py-16 bg-white w-[80vw] mx-auto h-[80vh] overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-gray-900">PACK & GO GETAWAYS</h2>
         <div className="
-          grid grid-cols-1 gap-6
+          grid grid-cols-1 gap-2
           md:grid-cols-3 md:auto-rows-[120px]
         ">
           {/* Kenya */}
@@ -31,7 +31,7 @@ export function DestinationGrid() {
 
           {/* Switzerland */}
           <Link href={`/tours?country=Switzerland`} className="md:row-span-2">
-            <Card className="relative overflow-hidden rounded-lg h-full group cursor-pointer min-h-[180px] sm:min-h-[400px] md:min-h-[670px]">
+            <Card className="relative overflow-hidden rounded-lg group cursor-pointer min-h-[180px] sm:min-h-[400px] md:min-h-[670px]">
               <Image
                 src="/images/switzerLand.jpeg"
                 alt="Switzerland"
