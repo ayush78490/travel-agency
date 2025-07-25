@@ -30,13 +30,13 @@ export function TourPackagesSection({
   const renderPackageCards = () => {
     if (isLoading) {
       return Array(4).fill(0).map((_, index) => (
-        <Card key={`loading-${index}`} className="overflow-hidden animate-pulse">
-          <div className="relative h-48 bg-gray-200" />
-          <CardContent className="p-4">
-            <div className="h-4 w-20 bg-gray-200 rounded mb-2" />
-            <div className="h-5 w-full bg-gray-200 rounded mb-2" />
-            <div className="h-4 w-24 bg-gray-200 rounded mb-3" />
-            <div className="h-10 w-full bg-gray-200 rounded" />
+        <Card key={`loading-${index}`} className="overflow-hidden animate-pulse bg-white rounded-lg shadow-sm">
+          <div className="relative h-32 bg-gray-200" />
+          <CardContent className="p-3">
+            <div className="h-3 w-16 bg-gray-200 rounded mb-2" />
+            <div className="h-4 w-full bg-gray-200 rounded mb-2" />
+            <div className="h-3 w-20 bg-gray-200 rounded mb-3" />
+            <div className="h-8 w-full bg-gray-200 rounded" />
           </CardContent>
         </Card>
       ))
@@ -50,31 +50,29 @@ export function TourPackagesSection({
         return null
       }
       return (
-        <Card key={pkg.id} className="overflow-hidden hover:shadow-lg transition-shadow group">
-          <div className="relative h-48">
+        <Card key={pkg.id} className="overflow-hidden bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+          <div className="relative h-32">
             <Image 
               src={pkg.image1 || "/images/default-tour.jpg"} 
               alt={pkg.title || "Tour package"}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               priority={false}
             />
           </div>
-          <CardContent className="p-4 flex flex-col h-[calc(100%-12rem)]">
-            <div className="flex-grow">
-              {pkg.duration && (
-                <Badge variant="outline" className="mb-2 text-xs">
-                  {pkg.duration}
-                </Badge>
-              )}
-              <h3 className="font-bold text-red-600 mb-2 text-sm sm:text-base line-clamp-2">
-                {pkg.title}
-              </h3>
-              <p className="text-sm text-gray-600 mb-3">
-                {pkg.price || "Price not available"}
-              </p>
-            </div>
+          <CardContent className="p-3">
+            {pkg.duration && (
+              <div className="text-xs text-gray-500 mb-1">
+                {pkg.duration}
+              </div>
+            )}
+            <h3 className="font-bold text-red-600 mb-1 text-sm leading-tight line-clamp-2">
+              {pkg.title}
+            </h3>
+            <p className="text-sm font-semibold text-gray-900 mb-3">
+              {pkg.price || "Price not available"}
+            </p>
             <TourRedirectButton
               tourId={pkg.id}
               tourTitle={pkg.title}
@@ -91,21 +89,21 @@ export function TourPackagesSection({
   }
 
   return (
-    <section className="py-12 sm:py-16 bg-gray-50 w-[80vw] mx-auto">
-      <div className="px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{title}</h2>
+    <section className="py-8 bg-white">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-bold text-gray-900">{title}</h2>
           {!isLoading && (
             <Link 
               href="/tours" 
-              className="text-red-600 hover:underline flex items-center text-sm sm:text-base transition-colors"
+              className="text-red-600 hover:underline flex items-center text-sm transition-colors"
               prefetch={false}
             >
               View all <ChevronRight className="w-4 h-4 ml-1" />
             </Link>
           )}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {renderPackageCards()}
         </div>
       </div>

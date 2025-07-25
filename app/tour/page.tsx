@@ -7,7 +7,7 @@ import TourPageClient from "./tourPageClient";
 
 export default function TourPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center">Loading tour page...</div>}>
+    <Suspense fallback={<div className="p-0 text-center">Loading tour page...</div>}>
       <TourPageClient />
     </Suspense>
   )
