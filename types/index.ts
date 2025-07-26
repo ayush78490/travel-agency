@@ -25,9 +25,9 @@ export type TourPackage = {
 };
 
 export type ItineraryDay = {
-  location: string;
+  content: string;
   day: string;
-  itinerary_details: string;
+  title: string;
 };
 
 export type Testimonial = {

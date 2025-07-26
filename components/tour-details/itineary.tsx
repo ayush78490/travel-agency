@@ -92,7 +92,7 @@ export function Itinerary({ tourId }: ItineraryProps) {
               >
                 <CollapsibleTrigger className="flex items-center justify-between w-full p-3 bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors">
                   <span>
-                    {day.day} : {day.location}
+                    {day.day} : {day.title}
                   </span>
                   {openDay === day.day ? (
                     <ChevronUp className="w-4 h-4" />
@@ -102,7 +102,7 @@ export function Itinerary({ tourId }: ItineraryProps) {
                 </CollapsibleTrigger>
                 <CollapsibleContent className="p-3 bg-gray-50 border border-t-0 text-sm">
                   <p className="text-gray-700 leading-relaxed">
-                    {day.itinerary_details || "No details available."}
+                    {day.content || "No details available."}
                   </p>
                 </CollapsibleContent>
               </Collapsible>
