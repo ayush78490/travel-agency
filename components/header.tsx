@@ -15,7 +15,7 @@ export function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: {
           <img 
             src="/images/logo.png" 
             alt="GoSamyati Logo"
-            className="h-10 w-auto object-contain ml-20"
+            className="h-10 w-auto object-contain ml-10 sm:ml-10"
             style={{ transform: "scale(1.5)" }} // Adjusted scale for better visibility
           />
         </Link>
@@ -47,7 +47,7 @@ export function Header({ isMobileMenuOpen, setIsMobileMenuOpen }: {
 
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t shadow-lg">
-          <nav className="container mx-auto px-4 py-4 space-y-4">
+          <nav className="container mx-auto px-2 py-4 space-y-4">
             <Link href="/" className="block text-gray-700 hover:text-red-600 font-medium">
               Home
             </Link>

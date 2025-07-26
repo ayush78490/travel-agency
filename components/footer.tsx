@@ -45,7 +45,7 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="#" className="hover:underline block py-1">
+                  <Link href="/privacy-policy" className="hover:underline block py-1">
                     Privacy Policies
                   </Link>
                 </li>

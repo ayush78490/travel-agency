@@ -50,7 +50,7 @@ export function TourPackagesSection({
         return null
       }
       return (
-        <Card key={pkg.id} className="overflow-hidden bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+        <Card key={pkg.id} className="overflow-hidden bg-white rounded-[20px] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
           <div className="relative h-32 sm:h-36 md:h-40">
             <Image 
               src={pkg.image1 || "/images/default-tour.jpg"} 
@@ -67,7 +67,7 @@ export function TourPackagesSection({
                 {pkg.duration}
               </div>
             )}
-            <h3 className="font-bold text-red-600 mb-1 text-sm md:text-base leading-tight line-clamp-2">
+            <h3 className="font-bold text-red-600 mb-1 text-sm md:text-base leading-tight line-clamp-2 uppercase">
               {pkg.title}
             </h3>
             <p className="text-sm md:text-base font-semibold text-gray-900 mb-3">

@@ -42,7 +42,7 @@ export function TourRedirectButton({
       <Button
         variant={variant}
         size={size}
-        className="w-full flex items-center justify-center gap-2 text-sm font-semibold bg-red-600 hover:bg-red-700 text-white"
+        className="w-full flex items-center justify-center gap-2 text-sm font-semibold bg-[#FF0000] hover:bg-red-700 text-white"
         disabled={disabled}
       >
         <span>Book Now</span>

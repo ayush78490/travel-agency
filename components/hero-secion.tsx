@@ -40,7 +40,7 @@ export function HeroSection({
       {/* Cards Layer */}
       <div className="relative z-10 h-full w-full flex items-center justify-center">
         {/* Center Main Card */}
-        <div className="relative z-30 -translate-y-6 left-[40px]">
+        <div className="relative z-30 -translate-y-6 left-[10px]">
           <Card className="relative overflow-hidden rounded-2xl w-72 h-96 shadow-xl border-2 border-white/20">
             <Image
               src={mainCard.image}
@@ -56,7 +56,7 @@ export function HeroSection({
         </div>
 
         {/* Right Side Cards */}
-        <div className="absolute top-1/2 left-1/2 ml-[100px] translate-y-[-50%] translate-x-[160px] z-20">
+        <div className="absolute top-1/2 left-1/2 ml-[90px] translate-y-[-50%] translate-x-[160px] z-20">
           <div className="flex gap-4">
             {sideCards.map((card, index) => (
               <Card

@@ -77,8 +77,8 @@ export default function BlogsPage() {
         setIsMobileMenuOpen={setIsMobileMenuOpen} 
       />
 
-      <div className="container mx-auto px-6 py-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container mx-auto px-0 py-8">
+        <div className="flex justify-between items-center px-10 mb-8">
           <div className="text-center md:text-left">
             <h1 className="text-4xl font-bold text-gray-900 mb-2">Travel Stories & Insights</h1>
             <p className="text-lg text-gray-600">
@@ -215,7 +215,7 @@ export default function BlogsPage() {
 
         {/* Featured Blogs */}
         {featuredBlogs.length > 0 && (
-          <section className="mb-12">
+          <section className="mb-12 px-20">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Featured Stories</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {featuredBlogs.map((blog) => (
@@ -278,7 +278,7 @@ export default function BlogsPage() {
         )}
 
         {/* Regular Blogs */}
-        <section>
+        <section className="px-20">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {regularBlogs.map((blog) => (
