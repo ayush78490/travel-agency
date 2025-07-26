@@ -14,7 +14,7 @@ export function Footer() {
   return (
     <div className="relative mt-20"> {/* Added top margin to prevent content overlap */}
       {/* Red background container - now responsive height */}
-      <div className="bg-red-600 h-[30vh] sm:h-[25vh] absolute bottom-0 w-full"></div>
+      <div className="bg-red-600 h-[30vh] sm:h-[45vh] absolute bottom-0 w-full"></div>
       
       {/* Main content container - responsive width and positioning */}
       <div className="bg-[#F7F7F7] text-black py-8 sm:py-10 rounded-lg px-6 sm:px-8 md:px-12 lg:px-20 w-[90vw] sm:w-[85vw] md:w-[80vw] mx-auto relative z-10 bottom-[10vh] sm:bottom-[8vh] md:bottom-[5vh]">

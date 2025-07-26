@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Play } from "lucide-react" // Optional: lucide-react play icon
 
 export function FloatingVideoGrid() {
   const [isMobile, setIsMobile] = useState(false)
@@ -22,16 +21,16 @@ export function FloatingVideoGrid() {
   const videos = isMobile
     ? [
         { src: "/videos/video1.mp4", bottom: "4vw", right: "4vw" },
-        { src: "/videos/video0.mp4", bottom: "4vw", right: "48vw" },
-        { src: "/videos/video0.mp4", bottom: "4vw", right: "92vw" },
+        { src: "/videos/video2.mp4", bottom: "4vw", right: "48vw" },
+        { src: "/videos/video3.mp4", bottom: "4vw", right: "92vw" },
         { src: "/videos/video4.mp4", bottom: "30vw", right: "4vw" },
         { src: "/videos/video5.mp4", bottom: "30vw", right: "48vw" },
         { src: "/videos/video6.mp4", bottom: "56vw", right: "4vw" },
       ]
     : [
         { src: "/videos/video1.mp4", bottom: "20px", right: "20px" },
-        { src: "/videos/video0.mp4", bottom: "20px", right: "260px" },
-        { src: "/videos/video0.mp4", bottom: "20px", right: "500px" },
+        { src: "/videos/video2.mp4", bottom: "20px", right: "260px" },
+        { src: "/videos/video3.mp4", bottom: "20px", right: "500px" },
         { src: "/videos/video4.mp4", bottom: "160px", right: "20px" },
         { src: "/videos/video5.mp4", bottom: "160px", right: "260px" },
         { src: "/videos/video6.mp4", bottom: "300px", right: "20px" },
@@ -91,7 +90,7 @@ export function FloatingVideoGrid() {
             zIndex: 10,
           }}
         >
-          {/* Play icon overlay until video is ready */}
+          {/* Image overlay until video is ready */}
           {!loadedVideos[i] && (
             <div
               style={{
@@ -104,7 +103,14 @@ export function FloatingVideoGrid() {
                 zIndex: 2,
               }}
             >
-              <Play size={32} color="white" />
+              <img 
+                src="/images/dubai.jpeg" 
+                alt="Play" 
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
             </div>
           )}
 

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 
 export function DestinationGrid() {
   return (
-    <section className="py-12 sm:py-16 bg-white w-[80vw] mx-auto">
+    <section className="py-12 sm:py-16 bg-white w-[90vw] mx-auto">
       <div className="container mx-auto px-4 sm:px-6">
         <h2 className="text-2xl sm:text-3xl font-bold mb-8 sm:mb-12 text-gray-900">PACK & GO GETAWAYS</h2>
         

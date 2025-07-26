@@ -3,6 +3,19 @@
 import Image from "next/image"
 import { Quote } from "lucide-react"
 import { Testimonial } from "@/types/index"
+import { useMemo } from "react"
+
+// Array of different static profile images
+const staticAvatarImages = [
+  "/images/profile.jpeg",
+  "/images/profile2.jpeg",
+  "/images/profile3.jpeg",
+  "/images/profile4.jpeg",
+  "/images/profile.jpeg",
+  "/images/profile2.jpeg",
+  "/images/profile3.jpeg",
+  "/images/profile4.jpeg",
+]
 
 export function TestimonialsSection({
   testimonials,
@@ -13,6 +26,12 @@ export function TestimonialsSection({
   currentTestimonial: number
   setCurrentTestimonial: (value: number) => void
 }) {
+  // Get a random fallback image for the current testimonial
+  const randomFallbackImage = useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * staticAvatarImages.length)
+    return staticAvatarImages[randomIndex]
+  }, [currentTestimonial]) // Change when testimonial changes
+
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       <div className="container mx-auto px-4 text-center relative z-10">
@@ -23,15 +42,15 @@ export function TestimonialsSection({
             {/* Orbiting avatars */}
             <div className="absolute inset-0 flex justify-center items-center pointer-events-none">
               <div className="w-96 h-96 relative">
-                {testimonials.slice(0, 8).map((testimonial, index) => {
-                  const angle = (index / 8) * 2 * Math.PI
+                {staticAvatarImages.map((image, index) => {
+                  const angle = (index / staticAvatarImages.length) * 2 * Math.PI
                   const radius = 180
                   const x = radius * Math.cos(angle)
                   const y = radius * Math.sin(angle)
                   return (
                     <Image
                       key={index}
-                      src={testimonial.image ?? "/images/profile.jpeg"}
+                      src={image}
                       alt="Orbiting Avatar"
                       width={50}
                       height={50}
@@ -49,7 +68,7 @@ export function TestimonialsSection({
             {/* Central avatar with quote icon */}
             <div className="relative mx-auto w-20 h-20 mb-6">
               <Image
-                src={testimonials[currentTestimonial].image ?? "/images/profile.jpeg"}
+                src={testimonials[currentTestimonial].image ?? randomFallbackImage}
                 alt={testimonials[currentTestimonial].name}
                 width={80}
                 height={80}
@@ -60,15 +79,11 @@ export function TestimonialsSection({
               </div>
             </div>
 
-            {/* Testimonial headline */}
+            {/* Rest of your testimonial content... */}
             <p className="text-sm text-red-600 font-semibold mb-1">{testimonials[currentTestimonial].title}</p>
-
-            {/* Testimonial text */}
             <p className="text-gray-700 text-lg leading-relaxed mb-4 px-4">
               {testimonials[currentTestimonial].text}
             </p>
-
-            {/* Name and title */}
             <p className="font-semibold text-gray-900">
               {testimonials[currentTestimonial].name}
             </p>

@@ -1,3 +1,4 @@
+// app/blog/page.tsx
 "use client"
 
 import Image from "next/image"
@@ -5,15 +6,43 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, User, Clock, ArrowRight } from "lucide-react"
+import { Calendar, User, Clock, ArrowRight, PenSquare } from "lucide-react"
+import { useState } from "react"
+import { toast } from "sonner"
+import { Header } from "@/components/header"
+import {Footer} from "@/components/footer"
+import { slugify } from "@/utils/slugify"
+
+interface BlogPost {
+  id: number
+  title: string
+  excerpt: string
+  image: string
+  author: string
+  date: string
+  readTime: string
+  category: string
+  featured: boolean
+}
 
 export default function BlogsPage() {
-  const blogs = [
+  const [isWriting, setIsWriting] = useState(false)
+  const [newBlog, setNewBlog] = useState({
+    title: "",
+    excerpt: "",
+    image: "",
+    author: "",
+    readTime: "",
+    category: "",
+    featured: false
+  })
+
+  // Static blog data
+  const staticBlogs: BlogPost[] = [
     {
       id: 1,
       title: "Exploring the Heritage Palaces of Rajasthan",
-      excerpt:
-        "Discover the magnificent architecture and rich history of Rajasthan's royal palaces. From Udaipur's Lake Palace to Jaipur's Amber Fort, each tells a unique story.",
+      excerpt: "Discover the magnificent architecture and rich history of Rajasthan's royal palaces.",
       image: "/images/heritage-hotel.webp",
       author: "Priya Sharma",
       date: "March 15, 2024",
@@ -81,45 +110,172 @@ export default function BlogsPage() {
       category: "Sustainability",
       featured: false,
     },
+
   ]
 
+  const [blogs, setBlogs] = useState<BlogPost[]>(staticBlogs)
   const featuredBlogs = blogs.filter((blog) => blog.featured)
   const regularBlogs = blogs.filter((blog) => !blog.featured)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Create new blog post
+    const blogToAdd = {
+      ...newBlog,
+      id: Date.now(),
+      date: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    }
+
+    setBlogs([blogToAdd, ...blogs])
+    toast.success("Blog published successfully!")
+    setIsWriting(false)
+    setNewBlog({
+      title: "",
+      excerpt: "",
+      image: "",
+      author: "",
+      readTime: "",
+      category: "",
+      featured: false
+    })
+  }
+
+  function slugify(text: string) {
+  return text.toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '')
+}
+
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <div className="text-2xl font-bold text-red-600">GoSamyati</div>
-          </Link>
-          <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-gray-700 hover:text-red-600 font-medium">
-              Home
-            </Link>
-            <Link href="/tours" className="text-gray-700 hover:text-red-600 font-medium">
-              Tours
-            </Link>
-            <Link href="/blogs" className="text-red-600 font-medium">
-              Blogs
-            </Link>
-            <Link href="/contact" className="text-gray-700 hover:text-red-600 font-medium">
-              Contact Us
-            </Link>
-          </nav>
-        </div>
-      </header>
+      {/* Header and navigation remains the same */}
+
+      <Header 
+        isMobileMenuOpen={isMobileMenuOpen} 
+        setIsMobileMenuOpen={setIsMobileMenuOpen} 
+      />
 
       <div className="container mx-auto px-6 py-8">
-        {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Travel Stories & Insights</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Get inspired by our travel stories, destination guides, and expert tips to make your next adventure
-            unforgettable.
-          </p>
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center md:text-left">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Travel Stories & Insights</h1>
+            <p className="text-lg text-gray-600">
+              Get inspired by our travel stories, destination guides, and expert tips.
+            </p>
+          </div>
+          <Button 
+            onClick={() => setIsWriting(true)}
+            className="gap-2 bg-red-600 hover:bg-red-700 text-white hidden md:flex"
+          >
+            <PenSquare className="w-4 h-4" />
+            Write Blog
+          </Button>
         </div>
+
+        {/* Blog Writing Form */}
+        {isWriting && (
+          <Card className="mb-12 p-6">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Create New Blog Post</h2>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsWriting(false)}
+                className="text-red-600 border-red-600 hover:bg-red-50"
+              >
+                Cancel
+              </Button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Title*</label>
+                  <input
+                    type="text"
+                    value={newBlog.title}
+                    onChange={(e) => setNewBlog({...newBlog, title: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Category*</label>
+                  <input
+                    type="text"
+                    value={newBlog.category}
+                    onChange={(e) => setNewBlog({...newBlog, category: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">Excerpt*</label>
+                <textarea
+                  value={newBlog.excerpt}
+                  onChange={(e) => setNewBlog({...newBlog, excerpt: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-md min-h-[100px]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Author*</label>
+                  <input
+                    type="text"
+                    value={newBlog.author}
+                    onChange={(e) => setNewBlog({...newBlog, author: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Read Time*</label>
+                  <input
+                    type="text"
+                    value={newBlog.readTime}
+                    onChange={(e) => setNewBlog({...newBlog, readTime: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-md"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Image URL</label>
+                  <input
+                    type="text"
+                    value={newBlog.image}
+                    onChange={(e) => setNewBlog({...newBlog, image: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-md"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={newBlog.featured}
+                  onChange={(e) => setNewBlog({...newBlog, featured: e.target.checked})}
+                  className="mr-2"
+                />
+                <label htmlFor="featured">Featured Post</label>
+              </div>
+
+              <Button type="submit" className="bg-red-600 hover:bg-red-700 text-white">
+                Publish Blog
+              </Button>
+            </form>
+          </Card>
+        )}
 
         {/* Featured Blogs */}
         {featuredBlogs.length > 0 && (
@@ -129,12 +285,18 @@ export default function BlogsPage() {
               {featuredBlogs.map((blog) => (
                 <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                   <div className="relative h-64">
-                    <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
-                    <div className="absolute top-4 left-4">
-                      <Badge className="bg-red-600 text-white">Featured</Badge>
-                    </div>
+                    <Image 
+                      src={blog.image || "/placeholder.svg"} 
+                      alt={blog.title} 
+                      fill 
+                      className="object-cover" 
+                    />
+                    {blog.featured && (
+                      <div className="absolute top-4 left-4">
+                        <Badge className="bg-red-600 text-white">Featured</Badge>
+                      </div>
+                    )}
                   </div>
-
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
                       <Badge variant="outline">{blog.category}</Badge>
@@ -157,10 +319,13 @@ export default function BlogsPage() {
                         <span className="text-sm text-gray-600">{blog.author}</span>
                       </div>
                       <Button variant="outline" className="group bg-transparent">
-                        Read More
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        <Link href={`/blog/${slugify(blog.title)}`} className="flex items-center">
+                          Read More
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
                       </Button>
                     </div>
+
                   </CardContent>
                 </Card>
               ))}
@@ -175,50 +340,60 @@ export default function BlogsPage() {
             {regularBlogs.map((blog) => (
               <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="relative h-48">
-                  <Image src={blog.image || "/placeholder.svg"} alt={blog.title} fill className="object-cover" />
+                  <Image 
+                    src={blog.image || "/placeholder.svg"} 
+                    alt={blog.title} 
+                    fill 
+                    className="object-cover" 
+                  />
                 </div>
-
                 <CardContent className="p-6">
                   <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <Badge variant="outline">{blog.category}</Badge>
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>{blog.readTime}</span>
+                      <Badge variant="outline">{blog.category}</Badge>
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span>{blog.date}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        <span>{blog.readTime}</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <h3 className="text-lg font-bold text-gray-900 mb-3">{blog.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{blog.excerpt}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{blog.title}</h3>
+                    <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <User className="w-4 h-4 mr-1" />
-                      <span>{blog.author}</span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <User className="w-4 h-4 mr-2 text-gray-400" />
+                        <span className="text-sm text-gray-600">{blog.author}</span>
+                      </div>
+                      <Button variant="outline" className="group bg-transparent">
+                        <Link href={`/blog/${slugify(blog.title)}`} className="flex items-center">
+                          Read More
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </Button>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span>{blog.date}</span>
-                    </div>
-                  </div>
 
-                  <Button variant="outline" className="w-full mt-4 group bg-transparent">
-                    Read Article
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
                 </CardContent>
               </Card>
             ))}
           </div>
         </section>
 
+        {/* Footer */}
+        <Footer/>
+
         {/* Newsletter Signup */}
-        <section className="mt-16 bg-red-600 rounded-lg p-8 text-center text-white">
-          <h2 className="text-2xl font-bold mb-4">Stay Updated with Our Latest Stories</h2>
-          <p className="mb-6 opacity-90">
-            Subscribe to our newsletter and never miss out on travel inspiration, tips, and exclusive offers.
-          </p>
+        <section className=" bg-red-600 p-8 text-center text-white">
+          <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
           <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input type="email" placeholder="Enter your email" className="flex-1 px-4 py-2 rounded-md text-gray-900" />
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="flex-1 px-4 py-2 rounded-md text-gray-900" 
+            />
             <Button className="bg-white text-red-600 hover:bg-gray-100">Subscribe</Button>
           </div>
         </section>
