@@ -103,10 +103,7 @@ export function Footer() {
             </div>
           </div>
 
-          {/* COPYRIGHT - added for completeness */}
-          <div className="mt-8 pt-4 border-t border-gray-200 text-xs text-center text-gray-500">
-            <p>© {new Date().getFullYear()} Gosamyati. All rights reserved.</p>
-          </div>
+          
         </div>
       </div>
     </div>
