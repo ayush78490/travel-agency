@@ -333,8 +333,10 @@ export default function BlogsPage() {
           </div>
         </section>
 
+        <Footer/>
+
         {/* Newsletter Signup */}
-        <section className="bg-red-600 p-8 rounded-lg my-12 text-center text-white">
+        <section className="bg-red-600 p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
           <p className="mb-6 max-w-2xl mx-auto">
             Subscribe to our newsletter for the latest travel tips, stories, and exclusive offers.
@@ -352,7 +354,6 @@ export default function BlogsPage() {
           </div>
         </section>
 
-        <Footer/>
       </div>
     </div>
   )
