@@ -12,12 +12,16 @@ import {
 
 export function Footer() {
   return (
-    <>
-      <footer className="bg-[#F7F7F7] text-black py-10 rounded-t-2xl px-4 sm:px-8 md:px-20 lg:px-40">
+    <div className="relative"> {/* Changed to relative positioning */}
+      {/* Red background container - smaller height */}
+      <div className="bg-red-600 h-[calc(100%-20vh)] absolute bottom-0 w-full"></div>
+      
+      {/* Main content container - extends beyond parent */}
+      <div className="bg-[#F7F7F7] text-black py-10 rounded-lg px-4 sm:px-8 md:px-20 lg:px-40 w-[80vw] mx-auto relative z-10 bottom-[5vh]">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* ABOUT GOSAMYATI */}
-            <div>
+            <div className="space-y-4 ml-[-5vw]">
               <h3 className="text-lg font-bold mb-4">ABOUT GOSAMYATI</h3>
               <ul className="space-y-2 text-sm">
                 <li>
@@ -80,7 +84,7 @@ export function Footer() {
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
             <div>
               <h4 className="font-semibold mb-1">Call Us</h4>
-              <p>+91 9940882200</p>
+              <p>+91 9540882200</p>
             </div>
             <div>
               <h4 className="font-semibold mb-1">Email Us</h4>
@@ -98,10 +102,7 @@ export function Footer() {
             </div>
           </div>
         </div>
-      </footer>
-
-      {/* RED STRIP AT BOTTOM */}
-      <div className="bg-red-600 h-6 rounded-b-2xl"></div>
-    </>
+      </div>
+    </div>
   )
 }

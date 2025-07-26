@@ -11,7 +11,7 @@ const features = [
 
 export function WhyUsSection() {
   return (
-    <div className="py-10 px-4 text-center">
+    <div className="py-20 px-4 text-center">
       <h2 className="text-2xl font-semibold text-black mb-1">Why Us</h2>
       <p className="text-xl font-bold text-red-600 mb-8">Because we care !</p>
 
