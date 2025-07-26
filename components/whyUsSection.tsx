@@ -19,7 +19,7 @@ export function WhyUsSection() {
         {features.map((feature, index) => (
           <div
             key={index}
-            className="bg-red-600 text-white rounded-lg py-10 px-4 shadow-md text-lg font-semibold flex flex-col justify-center items-center"
+            className="bg-[#FF0000] text-white rounded-lg py-10 px-4 shadow-md text-lg font-semibold flex flex-col justify-center items-center"
           >
             <span>{feature.title}</span>
             <span>{feature.subtitle}</span>

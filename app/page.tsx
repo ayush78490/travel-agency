@@ -71,7 +71,8 @@ const fallbackPackages: TourPackage[] = [
     ],
     duration: "5 Nights & 6 Days",
     slug: "",
-    description: ""
+    description: "",
+    basic_info: ""
   },
   {
     id: 2,
@@ -104,7 +105,8 @@ const fallbackPackages: TourPackage[] = [
     ],
     duration: "7 Nights & 8 Days",
     slug: "",
-    description: ""
+    description: "",
+    basic_info: ""
   },
   {
     id: 3,
@@ -137,7 +139,8 @@ const fallbackPackages: TourPackage[] = [
     ],
     duration: "4 Nights & 5 Days",
     slug: "",
-    description: ""
+    description: "",
+    basic_info: ""
   },
   {
     id: 4,
@@ -170,7 +173,8 @@ const fallbackPackages: TourPackage[] = [
     ],
     duration: "6 Nights & 7 Days",
     slug: "",
-    description: ""
+    description: "",
+    basic_info: ""
   }
 ];
 
