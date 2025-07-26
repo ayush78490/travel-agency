@@ -1,163 +1,87 @@
-// app/blog/[slug]/page.tsx
-import { notFound } from "next/navigation"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, User, Clock, ArrowLeft, Share2 } from "lucide-react"
-import { Badge } from "@/components/ui/badge" // Make sure to import the correct Badge component
-import { Metadata } from "next"
+import { notFound } from 'next/navigation';
+import { staticBlogs } from "@/lib/blog-data";
+import { Calendar, Clock, User, ArrowLeft } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
 
-interface BlogPost {
-  id: number
-  title: string
-  excerpt: string
-  image: string
-  author: string
-  date: string
-  readTime: string
-  category: string
-  featured: boolean
-  content?: string
-}
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const blog = staticBlogs.find(b => b.slug === params.slug);
 
-const staticBlogs: BlogPost[] = [
-  {
-    id: 1,
-    title: "Exploring the Heritage Palaces of Rajasthan",
-    excerpt: "Discover the magnificent architecture and rich history of Rajasthan's royal palaces.",
-    image: "/images/heritage-hotel.webp",
-    author: "Priya Sharma",
-    date: "March 15, 2024",
-    readTime: "8 min read",
-    category: "Heritage",
-    featured: true,
-    content: `<p>Rajasthan, the land of kings, is home to some of India's most magnificent palaces. These architectural marvels stand as testaments to the region's royal heritage.</p>
-              <h2>The City Palace, Udaipur</h2>
-              <p>Overlooking Lake Pichola, this palace complex is a blend of Rajasthani and Mughal architectural styles...</p>
-              <h2>Amber Fort, Jaipur</h2>
-              <p>Built with pale yellow and pink sandstone, this fort-palace is famous for its artistic Hindu elements...</p>`
-  },
-  // ... other blogs with content
-]
-
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const blog = staticBlogs.find(b => 
-    slugify(b.title) === params.slug
-  )
-  
-  if (!blog) return {}
-  
-  return {
-    title: `${blog.title} | Travel Blog`,
-    description: blog.excerpt,
-    openGraph: {
-      images: [blog.image],
-    },
-  }
-}
-
-export default function BlogDetailPage({ params }: { params: { slug: string } }) {
-  const blog = staticBlogs.find(b => 
-    slugify(b.title) === params.slug
-  )
-
-  if (!blog) return notFound()
-
-  const handleShare = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: blog.title,
-        text: blog.excerpt,
-        url: window.location.href,
-      })
-    } else {
-      // Fallback for browsers that don't support Web Share API
-      navigator.clipboard.writeText(window.location.href)
-      alert('Link copied to clipboard!')
-    }
+  if (!blog) {
+    return notFound();
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 py-8">
-        <div className="mb-6">
-          <Link href="/blog">
-            <Button variant="outline" className="gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Back to Blogs
-            </Button>
+    <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+      <div className="mb-8">
+        <Button variant="outline" asChild>
+          <Link href="/blog" className="flex items-center">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Blog
           </Link>
+        </Button>
+      </div>
+
+      <article className="prose prose-gray dark:prose-invert max-w-none">
+        <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
+          <Badge variant="outline">{blog.category}</Badge>
+          <div className="flex items-center">
+            <Calendar className="w-4 h-4 mr-1" />
+            <span>{blog.date}</span>
+          </div>
+          <div className="flex items-center">
+            <Clock className="w-4 h-4 mr-1" />
+            <span>{blog.readTime} read</span>
+          </div>
         </div>
 
-        <Card className="overflow-hidden shadow-lg">
-          <div className="relative h-64 sm:h-80 md:h-96">
-            <Image 
-              src={blog.image || "/placeholder.svg"} 
-              alt={blog.title} 
-              fill 
-              className="object-cover" 
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
+          {blog.title}
+        </h1>
+
+        <div className="flex items-center gap-4 mb-8">
+          {blog.authorImage && (
+            <Image
+              src={blog.authorImage}
+              alt={blog.author}
+              width={40}
+              height={40}
+              className="w-10 h-10 rounded-full"
             />
+          )}
+          <div className="flex items-center text-sm text-gray-600">
+            <User className="w-4 h-4 mr-2 text-gray-400" />
+            <span>By {blog.author}</span>
           </div>
-          
-          <CardContent className="p-6 sm:p-8">
-            <div className="flex flex-wrap gap-3 items-center mb-6 text-sm text-gray-600 dark:text-gray-400">
-              <Badge variant="secondary">{blog.category}</Badge>
-              
-              <div className="flex items-center">
-                <User className="w-4 h-4 mr-2" />
-                <span>{blog.author}</span>
-              </div>
-              
-              <div className="flex items-center">
-                <Calendar className="w-4 h-4 mr-2" />
-                <span>{blog.date}</span>
-              </div>
-              
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
-                <span>{blog.readTime}</span>
-              </div>
-            </div>
+        </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 dark:text-white">
-              {blog.title}
-            </h1>
-            
-            <div 
-              className="prose prose-gray dark:prose-invert max-w-none"
-              dangerouslySetInnerHTML={{ __html: blog.content || '' }}
-            />
+        <div className="relative h-96 mb-8 rounded-lg overflow-hidden">
+          <Image
+            src={blog.image}
+            alt={blog.title}
+            fill
+            className="object-cover"
+          />
+        </div>
 
-            <div className="mt-12 flex flex-col sm:flex-row justify-between gap-4 border-t pt-6">
-              <Link href="/blog">
-                <Button variant="outline" className="gap-2 w-full sm:w-auto">
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to Blogs
-                </Button>
-              </Link>
-              
-              <Button 
-                variant="outline" 
-                className="gap-2 w-full sm:w-auto"
-                onClick={handleShare}
-              >
-                <Share2 className="w-4 h-4" />
-                Share Article
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="border-t pt-8">
+          <div
+            className="prose prose-gray dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+          />
+        </div>
+      </article>
+
+      <div className="mt-12 pt-8 border-t">
+        <Button variant="outline" asChild>
+          <Link href="/blog" className="flex items-center">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Blog
+          </Link>
+        </Button>
       </div>
     </div>
-  )
-}
-
-// Helper function to create slugs
-function slugify(text: string) {
-  return text.toLowerCase()
-    .replace(/ /g, '-')
-    .replace(/[^\w-]+/g, '')
+  );
 }

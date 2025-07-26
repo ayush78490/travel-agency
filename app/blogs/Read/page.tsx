@@ -15,7 +15,21 @@ interface BlogPost {
   authorImage?: string;
 }
 
-export default function BlogPostPage({ blog }: { blog: BlogPost }) {
+// Define default values for a blog post
+const DEFAULT_BLOG_POST: Partial<BlogPost> = {
+  title: "Blog Post Not Found",
+  excerpt: "",
+  content: "<p>The requested blog post could not be found.</p>",
+  category: "Uncategorized",
+  date: "Unknown date",
+  readTime: "0 min",
+  author: "Unknown author",
+};
+
+export default function BlogPostPage({ blog }: { blog?: BlogPost }) {
+  // Merge with default values if blog is undefined
+  const currentBlog = blog ? blog : DEFAULT_BLOG_POST as BlogPost;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
       <div className="mb-8">
@@ -29,39 +43,39 @@ export default function BlogPostPage({ blog }: { blog: BlogPost }) {
 
       <article className="prose prose-gray dark:prose-invert max-w-none">
         <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
-          <Badge variant="outline">{blog.category}</Badge>
+          <Badge variant="outline">{currentBlog.category}</Badge>
           <div className="flex items-center">
             <Calendar className="w-4 h-4 mr-1" />
-            <span>{blog.date}</span>
+            <span>{currentBlog.date}</span>
           </div>
           <div className="flex items-center">
             <Clock className="w-4 h-4 mr-1" />
-            <span>{blog.readTime} read</span>
+            <span>{currentBlog.readTime} read</span>
           </div>
         </div>
 
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-6">
-          {blog.title}
+          {currentBlog.title}
         </h1>
 
         <div className="flex items-center gap-4 mb-8">
-          {blog.authorImage && (
+          {currentBlog.authorImage && (
             <img
-              src={blog.authorImage}
-              alt={blog.author}
+              src={currentBlog.authorImage}
+              alt={currentBlog.author}
               className="w-10 h-10 rounded-full"
             />
           )}
           <div className="flex items-center text-sm text-gray-600">
             <User className="w-4 h-4 mr-2 text-gray-400" />
-            <span>By {blog.author}</span>
+            <span>By {currentBlog.author}</span>
           </div>
         </div>
 
         <div className="border-t pt-8">
           <div
             className="prose prose-gray dark:prose-invert max-w-none"
-            dangerouslySetInnerHTML={{ __html: blog.content }}
+            dangerouslySetInnerHTML={{ __html: currentBlog.content }}
           />
         </div>
       </article>

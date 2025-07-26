@@ -198,7 +198,7 @@ export default function TourPageClient() {
           </div>
 
           <div className="lg:col-span-1">
-            <BookingSidebar price={tourPackage.price} />
+            <BookingSidebar tourId={tourId || ""} />
           </div>
         </div>
       </div>
