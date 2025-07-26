@@ -7,7 +7,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Phone, Mail, MapPin, Clock, Facebook, Twitter, Instagram, Youtube, Send, Check } from "lucide-react"
-import { Header } from "@/components/header" // <-- Import Header
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer" 
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -111,7 +112,7 @@ export default function ContactPage() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-6 py-8 pb-0">
         {/* Page Header - modified for trip planning */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Plan Your Dream Trip</h1>
@@ -506,6 +507,7 @@ export default function ContactPage() {
             </CardContent>
           </Card>
         </div>
+        <Footer />
       </div>
     </div>
   )

@@ -283,7 +283,7 @@ export default function GoSamyatiTravel() {
       <DestinationGrid />
       
       <TourPackagesSection 
-        title="GoSamyati Special" 
+        title="GOSAMYATI SPECIALS" 
         packages={packages.slice(0, 4)}
         isLoading={isLoading}
         error={error}
