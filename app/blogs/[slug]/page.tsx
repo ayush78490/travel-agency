@@ -322,7 +322,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild className="bg-red-600 hover:bg-red-700 text-white">
-                <Link href="/blog">
+                <Link href="/blogs">
                   Explore More Articles
                 </Link>
               </Button>
@@ -337,7 +337,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
         <div className="mt-12 pt-8 border-t">
           <Button variant="outline" asChild>
-            <Link href="/blog" className="flex items-center hover:bg-gray-100">
+            <Link href="/blogs" className="flex items-center hover:bg-gray-100">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Blog
             </Link>
