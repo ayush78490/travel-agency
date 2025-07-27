@@ -112,7 +112,7 @@ export default function ContactPage() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
-      <div className="container mx-auto px-6 py-8 pb-0">
+      <div className="container mx-auto py-8 pb-0">
         {/* Page Header - modified for trip planning */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Plan Your Dream Trip</h1>
@@ -121,7 +121,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-8">
           {/* Contact Information - unchanged */}
           <div className="lg:col-span-1">
             <Card className="mb-6">
@@ -449,7 +449,7 @@ export default function ContactPage() {
         </div>
 
         {/* Map Section - unchanged */}
-        <div className="mt-12">
+        <div className="mt-12 px-8">
           <Card>
             <CardContent className="p-0">
               <div className="relative h-64 md:h-96 bg-gray-200 rounded-lg overflow-hidden">
@@ -466,7 +466,7 @@ export default function ContactPage() {
         </div>
 
         {/* FAQ Section - unchanged */}
-        <div className="mt-12">
+        <div className="mt-12 px-8">
           <Card>
             <CardContent className="p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>

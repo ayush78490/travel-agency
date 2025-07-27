@@ -1,19 +1,87 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, User, Clock, ArrowRight, PenSquare } from "lucide-react"
+import { Calendar, User, Clock, ArrowRight, PenSquare, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
-import { BlogPost, staticBlogs as initialBlogs } from "@/lib/blog-data"
+
+// BlogPost interface
+interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  featured: boolean;
+  authorImage: string;
+}
+
+// API Response interface
+interface ApiBlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  featured: string; // API returns string "0" or "1"
+  authorImage: string;
+}
+
+interface ApiResponse {
+  data: ApiBlogPost[];
+}
+
+// Fallback static blogs
+const fallbackBlogs: BlogPost[] = [
+  {
+    id: 1,
+    title: "The Ultimate Guide to Backpacking in Southeast Asia",
+    slug: "ultimate-guide-backpacking-southeast-asia",
+    excerpt: "Discover the best routes, budget tips, and hidden gems for your Southeast Asian adventure.",
+    content: `<p>Southeast Asia is a backpacker's paradise, offering incredible diversity, affordable prices, and unforgettable experiences. This comprehensive guide will help you plan the perfect adventure.</p>`,
+    image: "/api/placeholder/600/400",
+    author: "Sarah Johnson",
+    date: "December 15, 2023",
+    readTime: "8 min read",
+    category: "Backpacking",
+    featured: true,
+    authorImage: "/api/placeholder/40/40"
+  },
+  {
+    id: 2,
+    title: "Hidden Gems of European Cities",
+    slug: "hidden-gems-european-cities",
+    excerpt: "Explore lesser-known attractions in Europe's most famous cities.",
+    content: `<p>While Europe's major cities are famous for their iconic landmarks, there's so much more to discover when you venture off the beaten path.</p>`,
+    image: "/api/placeholder/600/400",
+    author: "Marco Rodriguez",
+    date: "December 12, 2023",
+    readTime: "6 min read",
+    category: "City Guides",
+    featured: false,
+    authorImage: "/api/placeholder/40/40"
+  }
+];
 
 export default function BlogsPage() {
   const [isWriting, setIsWriting] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [newBlog, setNewBlog] = useState({
     title: "",
     excerpt: "",
@@ -25,10 +93,66 @@ export default function BlogsPage() {
     content: ""
   })
 
-  const [blogs, setBlogs] = useState<BlogPost[]>(initialBlogs)
+  const [blogs, setBlogs] = useState<BlogPost[]>([])
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Transform API data to match BlogPost interface
+  const transformApiData = (apiBlogs: ApiBlogPost[]): BlogPost[] => {
+    return apiBlogs.map(blog => ({
+      id: parseInt(blog.id),
+      title: blog.title,
+      slug: blog.slug,
+      excerpt: blog.excerpt,
+      content: blog.content,
+      image: blog.image,
+      author: blog.author,
+      date: blog.date,
+      readTime: blog.readTime,
+      category: blog.category,
+      featured: blog.featured === "1",
+      authorImage: blog.authorImage
+    }))
+  }
+
+  // Fetch blogs from local API proxy
+  const fetchBlogs = async () => {
+    try {
+      setIsLoading(true)
+      // Use the local API proxy instead of direct external API call
+      const response = await fetch('/api/blog')
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch blogs: ${response.status}`)
+      }
+      
+      const apiResponse: ApiResponse = await response.json()
+      
+      // Check if we have data
+      if (apiResponse.data && Array.isArray(apiResponse.data)) {
+        const transformedBlogs = transformApiData(apiResponse.data)
+        setBlogs(transformedBlogs)
+        console.log('Blogs loaded from API:', transformedBlogs.length)
+      } else {
+        throw new Error('Invalid API response format')
+      }
+      
+    } catch (error) {
+      console.error('Error fetching blogs:', error)
+      // Use fallback static data if API fails
+      setBlogs(fallbackBlogs)
+      toast.error("Failed to load latest blogs. Showing sample content.")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Fetch blogs on component mount
+  useEffect(() => {
+    fetchBlogs()
+  }, [])
+
   const featuredBlogs = blogs.filter((blog) => blog.featured)
   const regularBlogs = blogs.filter((blog) => !blog.featured)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,6 +194,26 @@ export default function BlogsPage() {
     })
   }
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header 
+          isMobileMenuOpen={isMobileMenuOpen} 
+          setIsMobileMenuOpen={setIsMobileMenuOpen} 
+        />
+        <div className="container mx-auto px-0 py-8">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-red-600" />
+              <p className="text-gray-600">Loading travel stories...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -85,13 +229,27 @@ export default function BlogsPage() {
               Get inspired by our travel stories, destination guides, and expert tips.
             </p>
           </div>
-          <Button 
-            onClick={() => setIsWriting(true)}
-            className="gap-2 bg-red-600 hover:bg-red-700 text-white hidden md:flex"
-          >
-            <PenSquare className="w-4 h-4" />
-            Write Blog
-          </Button>
+          <div className="flex gap-4">
+            <Button 
+              onClick={() => fetchBlogs()}
+              variant="outline"
+              className="gap-2 hidden md:flex"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Refresh"
+              )}
+            </Button>
+            <Button 
+              onClick={() => setIsWriting(true)}
+              className="gap-2 bg-red-600 hover:bg-red-700 text-white hidden md:flex"
+            >
+              <PenSquare className="w-4 h-4" />
+              Write Blog
+            </Button>
+          </div>
         </div>
 
         {/* Blog Writing Form */}
@@ -213,6 +371,20 @@ export default function BlogsPage() {
           </Card>
         )}
 
+        {/* Empty State */}
+        {blogs.length === 0 && !isLoading && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">No blog posts available at the moment.</p>
+            <Button 
+              onClick={() => setIsWriting(true)}
+              className="gap-2 bg-red-600 hover:bg-red-700 text-white"
+            >
+              <PenSquare className="w-4 h-4" />
+              Write First Blog
+            </Button>
+          </div>
+        )}
+
         {/* Featured Blogs */}
         {featuredBlogs.length > 0 && (
           <section className="mb-12 px-20">
@@ -264,7 +436,7 @@ export default function BlogsPage() {
                         <span className="text-sm text-gray-600">{blog.author}</span>
                       </div>
                       <Button asChild variant="outline" className="group bg-transparent">
-                        <Link href={`/blog/${blog.slug}`} className="flex items-center">
+                        <Link href={`/blogs/${blog.slug}`} className="flex items-center">
                           Read More
                           <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -278,60 +450,62 @@ export default function BlogsPage() {
         )}
 
         {/* Regular Blogs */}
-        <section className="px-20">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Articles</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularBlogs.map((blog) => (
-              <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="relative h-48">
-                  <Image 
-                    src={blog.image || "/placeholder.svg"} 
-                    alt={blog.title} 
-                    fill 
-                    className="object-cover" 
-                  />
-                </div>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
-                    <Badge variant="outline">{blog.category}</Badge>
-                    <div className="flex items-center">
-                      <Calendar className="w-4 h-4 mr-1" />
-                      <span>{blog.date}</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span>{blog.readTime}</span>
-                    </div>
+        {regularBlogs.length > 0 && (
+          <section className="px-20">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Latest Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {regularBlogs.map((blog) => (
+                <Card key={blog.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  <div className="relative h-48">
+                    <Image 
+                      src={blog.image || "/placeholder.svg"} 
+                      alt={blog.title} 
+                      fill 
+                      className="object-cover" 
+                    />
                   </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{blog.title}</h3>
-                  <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      {blog.authorImage && (
-                        <Image
-                          src={blog.authorImage}
-                          alt={blog.author}
-                          width={24}
-                          height={24}
-                          className="w-6 h-6 rounded-full mr-2"
-                        />
-                      )}
-                      <span className="text-sm text-gray-600">{blog.author}</span>
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-4 text-sm text-gray-600 mb-3">
+                      <Badge variant="outline">{blog.category}</Badge>
+                      <div className="flex items-center">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        <span>{blog.date}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        <span>{blog.readTime}</span>
+                      </div>
                     </div>
-                    <Button asChild variant="outline" className="group bg-transparent">
-                      <Link href={`/blog/${blog.slug}`} className="flex items-center">
-                        Read More
-                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{blog.title}</h3>
+                    <p className="text-gray-600 mb-4 line-clamp-3">{blog.excerpt}</p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        {blog.authorImage && (
+                          <Image
+                            src={blog.authorImage}
+                            alt={blog.author}
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 rounded-full mr-2"
+                          />
+                        )}
+                        <span className="text-sm text-gray-600">{blog.author}</span>
+                      </div>
+                      <Button asChild variant="outline" className="group bg-transparent">
+                        <Link href={`/blogs/${blog.slug}`} className="flex items-center">
+                          Read More
+                          <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
         <Footer/>
 
