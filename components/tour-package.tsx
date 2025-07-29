@@ -43,7 +43,7 @@ export function TourPackagesSection({
     }
 
     const packagesToShow = (error || !packages?.length) ? fallbackPackages : packages
-    
+   
     return packagesToShow.map((pkg) => {
       if (!pkg.id || !pkg.title) {
         console.warn(`Skipping tour package with missing ID or title`, pkg)
@@ -51,7 +51,7 @@ export function TourPackagesSection({
       }
       return (
         <Card key={pkg.id} className="overflow-hidden bg-white rounded-[20px] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
-          <div className="relative h-32 sm:h-36 md:h-40">
+          <div className="relative h-50 sm:h-70 md:h-60">
             <Image 
               src={pkg.image1 || "/images/default-tour.jpg"} 
               alt={pkg.title || "Tour package"}
@@ -62,11 +62,14 @@ export function TourPackagesSection({
             />
           </div>
           <CardContent className="p-3 md:p-4 flex-grow flex flex-col">
-            {pkg.duration && (
+            {/* {pkg.duration && (
               <div className="text-xs text-gray-500 mb-1">
                 {pkg.duration}
               </div>
-            )}
+            )} */}
+            <div className="text-xs text-gray-500 mb-1">
+                {pkg.nights} Nights & {pkg.days} Days  
+            </div>
             <h3 className="font-bold text-red-600 mb-1 text-sm md:text-base leading-tight line-clamp-2 uppercase">
               {pkg.title}
             </h3>
@@ -91,10 +94,12 @@ export function TourPackagesSection({
   }
 
   return (
-    <section className="py-6 sm:py-8 md:py-12 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-12 sm:py-16 bg-white w-[90vw] mx-auto">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="flex justify-between items-center mb-4 sm:mb-6">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{title}</h2>
+          
+          {/* <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">{title}</h2> */}
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-gray-900">{title}</h2>
           {!isLoading && (
             <Link 
               href="/tours" 

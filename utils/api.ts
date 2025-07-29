@@ -67,6 +67,7 @@ export async function fetchTourPackages(params: string | Record<string, any> = {
 
 // Helper function to process individual tour package
 function processTourPackage(item: any): TourPackage {
+  
   return {
     id: ensureNumber(item.id, 0),
     slug: ensureString(item.slug, 'untitled-tour'),
@@ -91,7 +92,7 @@ function processTourPackage(item: any): TourPackage {
     itinerary: item.iternary ? item.iternary.map((day: any) => ({
       day: ensureString(day.day, 'DAY 1'),
       title: ensureString(day.location, 'Untitled Day'),
-      content: ensureString(day.iternary_details, 'No details available')
+      content: ensureString(day.iternary_detail, 'No details available')
     })) : []
   };
 }
@@ -166,8 +167,11 @@ function optionalString(value: unknown): string | undefined {
 
 function formatPrice(price: unknown): string {
   if (!price) return 'Price on request';
-  const numericValue = String(price).replace(/[^0-9.]/g, '');
-  return `₹${numericValue}`;
+  // const numericValue = String(price).replace(/[^0-9.]/g, '');
+  const numericValue=Number(price).toLocaleString('en-IN');
+  // return `₹${numericValue}`;
+  // const numericValue2=price.toLocaleString('en-IN', {style: 'currency',currency: 'INR',});
+  return `INR ${numericValue}`;
 }
 
 function processHighlights(highlights: unknown): string[] {

@@ -63,7 +63,7 @@ export default function ToursPage() {
   const categories = [
     { id: "all", name: "All Tours" },
     { id: "heritage", name: "Heritage" },
-    { id: "beach", name: "Beach" },
+    // { id: "beach", name: "Beach" },
     { id: "culture", name: "Culture" },
     { id: "adventure", name: "Adventure" },
   ]

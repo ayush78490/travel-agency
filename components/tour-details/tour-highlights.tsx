@@ -84,8 +84,8 @@ export function TourHighlights({ tourId }: TourHighlightsProps) {
 
         <div className="mt-4 md:mt-0 md:ml-6">
           <div className="bg-gray-50 p-4 rounded-lg text-center min-w-[140px]">
-            <div className="text-xs text-gray-600 mb-1">Starts from</div>
-            <div className="text-xl font-bold text-red-600">{tour.price}</div>
+            {/* <div className="text-xs text-gray-600 mb-1">Starts from</div> */}
+            {/* <div className="text-xl font-bold text-red-600">{tour.price}</div> */}
           </div>
         </div>
       </div>
